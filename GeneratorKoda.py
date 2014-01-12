@@ -961,13 +961,13 @@ class NaredbaSkoka(Naredba):
 
         lbl = imaLiLabele(trenutniRedIzlaza)
         if not lbl:
-            file.write("\t\t")
+            file.write("\t\t\t")
         file.write("POP R6\n")
         trenutniRedIzlaza += 1
 
         lbl = imaLiLabele(trenutniRedIzlaza)
         if not lbl:
-            file.write("\t\t")
+            file.write("\t\t\t")
         file.write("RET\n")
         trenutniRedIzlaza += 1
 
@@ -1674,13 +1674,13 @@ class PrimarniIzraz(SlozenaNaredba):
 
         lbl = imaLiLabele(trenutniRedIzlaza)
         if not lbl:
-            file.write("\t\t")
+            file.write("\t\t\t")
         file.write("MOVE %D "+broj+", R"+trenRegistar+"\n")
         trenutniRedIzlaza += 1
 
         lbl = imaLiLabele(trenutniRedIzlaza)
         if not lbl:
-            file.write("\t\t")
+            file.write("\t\t\t")
         file.write("PUSH R"+trenRegistar+"\n")
         trenutniRedIzlaza += 1
 
@@ -1939,7 +1939,7 @@ def otvoriFileZaIzlaz():
     global file
 
     file = open("b.frisc","w")
-    inicijalniZapis = "\t\tMOVE 40000, R7\n\t\tCALL F_MAIN\n\t\tHALT\n\nF_MAIN\t"
+    inicijalniZapis = "\t\t\tMOVE 40000, R7\n\t\t\tCALL F_MAIN\n\t\t\tHALT\n\nF_MAIN\t\t"
     file.write(inicijalniZapis)
     trenutniRedIzlaza = 5
 
