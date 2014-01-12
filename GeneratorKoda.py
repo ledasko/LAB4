@@ -129,8 +129,6 @@ def provjeriEksplicitno(tip1,tip2):
 
     return provjeriImplicitno(tip1,tip2)
 
-
-
 def provjeriNizX(tip):
     cmp1 = "niz(char)"
     cmp2 = "niz(const(char))"
@@ -939,6 +937,9 @@ class NaredbaSkoka(Naredba):
             return 2
         elif kljucnaRijec == 'KR_RETURN':
             return 3
+
+    def asmreturn(self):
+        pass
 
     def provjeri(self):
         global imeTrenutneFunkcije
@@ -1873,7 +1874,38 @@ def ucitajUlaz():
         listaPrograma[i] = listaPrograma[i].rstrip()
     return listaPrograma
 
+def otvoriFileZaIzlaz():
+    global trenutniRedIzlaza
+    global labele
+
+    file = open("b.frisc","w")
+    inicijalniZapis = "\t\tMOVE 40000, R7\n\t\tCALL F_MAIN\n\t\tHALT\n\nF_MAIN\ttest"
+    file.write(inicijalniZapis)
+    trenutniRedIzlaza = 5
+
+    labele[trenutniRedIzlaza] = "F_MAIN"
+
+def parametriGeneratora():
+    global trenutniRedIzlaza
+    global labele
+    global zauzetostRegistara
+    global vrijednostRegistara
+
+    trenutniRedIzlaza = 0
+    #key je redak, a value je labela
+    labele = {}
+
+    zauzetostRegistara = {}
+    vrijednostRegistara = {}
+    for i in range(0,7):
+        zauzetostRegistara[i] = 0
+        vrijednostRegistara[i] = 0
+    zauzetostRegistara[7] = 1
+    vrijednostRegistara[7] = 40000
+
 def main ():
+
+    parametriGeneratora()
 
     global listaPrograma
     global aktualnaTablica
@@ -1897,6 +1929,8 @@ def main ():
     stvoriTablicu()
 
     listaPrograma = ucitajUlaz()
+
+    otvoriFileZaIzlaz()
 
     #stvori inicijalni objekt
     prijevodna_jedinica = PrijevodnaJedinica(0)
