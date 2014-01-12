@@ -2,7 +2,20 @@ __author__ = 'Matko'
 
 import sys
 
+def nadiSlobodniRegistar():
+    trenRegistar = -1
+    for registar in zauzetostRegistara:
+        if zauzetostRegistara[registar] == 0:
+            trenRegistar = registar
+            break
+    return trenRegistar
 
+def imaLiLabele(redak):
+    global albele
+    if redak in labele:
+        return 1
+    else:
+        return 0
 
 def ispisGreske(desnaStrana):
     pozicijaPrviDesni = desnaStrana[0][1]
@@ -941,9 +954,17 @@ class NaredbaSkoka(Naredba):
             return 3
 
     def asmreturn(self):
-        file.write("\t\tPOP R6\n\t\tRET")
+        lbl = imaLiLabele(trenutniRedIzlaza)
+
+        if not lbl:
+            file.write("\t\t")
+
+        file.write("POP R6\n\t\tRET")
+
         zauzetostRegistara[6] = 1
         vrijednostRegistara[6] = stog.pop(-1)
+
+        trenutniRedIzlaza += 2
 
     def provjeri(self):
         global imeTrenutneFunkcije
@@ -1634,6 +1655,23 @@ class PrimarniIzraz(SlozenaNaredba):
             elif tmp == 'NIZ_ZNAKOVA':
                 return 4
 
+    def asmbroj(self,broj):
+        broj = str(broj)
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        trenRegistar = nadiSlobodniRegistar()
+
+        if trenRegistar < 0:
+            print "Nema slobodnih registara"
+            exit(-1)
+
+
+
+        if not lbl:
+            file.write("\t\t")
+
+
+        trenutniRedIzlaza += 2
+
     def provjeri(self):
         global jeliFja
 
@@ -1681,6 +1719,9 @@ class PrimarniIzraz(SlozenaNaredba):
 
 
             self.tip = "int"
+
+            self.asmbroj(broj)
+
             return 0
 
         elif brojProdukcije == 3:
