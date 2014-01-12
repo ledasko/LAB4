@@ -943,7 +943,7 @@ class NaredbaSkoka(Naredba):
     def asmreturn(self):
         file.write("\t\tPOP R6\n\t\tRET")
         zauzetostRegistara[6] = 1
-        vrijednostRegistara[6] =
+        vrijednostRegistara[6] = stog.pop(-1)
 
     def provjeri(self):
         global imeTrenutneFunkcije
@@ -978,6 +978,8 @@ class NaredbaSkoka(Naredba):
 
             if not implicitno:
                 ispisGreske(desnaStrana)
+
+            self.asmreturn()
 
 class Izraz(SlozenaNaredba):
 
@@ -1898,6 +1900,8 @@ def parametriGeneratora():
     global stog
 
     stog = []
+    #??????????
+    stog.append(-1)
 
     trenutniRedIzlaza = 0
     #key je redak, a value je labela
