@@ -2,6 +2,8 @@ __author__ = 'Matko'
 
 import sys
 
+
+
 def ispisGreske(desnaStrana):
     pozicijaPrviDesni = desnaStrana[0][1]
     pozicijaLijevi = pozicijaPrviDesni - 1
@@ -939,7 +941,9 @@ class NaredbaSkoka(Naredba):
             return 3
 
     def asmreturn(self):
-        pass
+        file.write("\t\tPOP R6\n\t\tRET")
+        zauzetostRegistara[6] = 1
+        vrijednostRegistara[6] =
 
     def provjeri(self):
         global imeTrenutneFunkcije
@@ -1877,6 +1881,7 @@ def ucitajUlaz():
 def otvoriFileZaIzlaz():
     global trenutniRedIzlaza
     global labele
+    global file
 
     file = open("b.frisc","w")
     inicijalniZapis = "\t\tMOVE 40000, R7\n\t\tCALL F_MAIN\n\t\tHALT\n\nF_MAIN\ttest"
@@ -1890,6 +1895,9 @@ def parametriGeneratora():
     global labele
     global zauzetostRegistara
     global vrijednostRegistara
+    global stog
+
+    stog = []
 
     trenutniRedIzlaza = 0
     #key je redak, a value je labela
