@@ -186,7 +186,7 @@ $RECYCLE.BIN/
 #############
 ## Python
 #############
-idea/
+.idea/
 
 *.py[co]
 
