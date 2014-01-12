@@ -954,17 +954,22 @@ class NaredbaSkoka(Naredba):
             return 3
 
     def asmreturn(self):
-        lbl = imaLiLabele(trenutniRedIzlaza)
-
-        if not lbl:
-            file.write("\t\t")
-
-        file.write("POP R6\n\t\tRET")
+        global trenutniRedIzlaza
 
         zauzetostRegistara[6] = 1
         vrijednostRegistara[6] = stog.pop(-1)
 
-        trenutniRedIzlaza += 2
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t")
+        file.write("POP R6\n")
+        trenutniRedIzlaza += 1
+
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t")
+        file.write("RET\n")
+        trenutniRedIzlaza += 1
 
     def provjeri(self):
         global imeTrenutneFunkcije
@@ -1656,21 +1661,28 @@ class PrimarniIzraz(SlozenaNaredba):
                 return 4
 
     def asmbroj(self,broj):
+        global trenutniRedIzlaza
         broj = str(broj)
-        lbl = imaLiLabele(trenutniRedIzlaza)
         trenRegistar = nadiSlobodniRegistar()
 
         if trenRegistar < 0:
             print "Nema slobodnih registara"
             exit(-1)
 
+        stog.append(trenRegistar)
+        trenRegistar = str(trenRegistar)
 
-
+        lbl = imaLiLabele(trenutniRedIzlaza)
         if not lbl:
             file.write("\t\t")
+        file.write("MOVE %D "+broj+", R"+trenRegistar+"\n")
+        trenutniRedIzlaza += 1
 
-
-        trenutniRedIzlaza += 2
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t")
+        file.write("PUSH R"+trenRegistar+"\n")
+        trenutniRedIzlaza += 1
 
     def provjeri(self):
         global jeliFja
@@ -1927,7 +1939,7 @@ def otvoriFileZaIzlaz():
     global file
 
     file = open("b.frisc","w")
-    inicijalniZapis = "\t\tMOVE 40000, R7\n\t\tCALL F_MAIN\n\t\tHALT\n\nF_MAIN\ttest"
+    inicijalniZapis = "\t\tMOVE 40000, R7\n\t\tCALL F_MAIN\n\t\tHALT\n\nF_MAIN\t"
     file.write(inicijalniZapis)
     trenutniRedIzlaza = 5
 
@@ -1941,8 +1953,6 @@ def parametriGeneratora():
     global stog
 
     stog = []
-    #??????????
-    stog.append(-1)
 
     trenutniRedIzlaza = 0
     #key je redak, a value je labela
@@ -1966,6 +1976,7 @@ def main ():
     global imeTrenutneFunkcije
     global uPetlji
     global jeliFja
+
 
     jeliFja = 0
 
