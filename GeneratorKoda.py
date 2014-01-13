@@ -2040,6 +2040,12 @@ class DefinicijaFunkcije(SlozenaNaredba):
     def __init__(self,pozicijaUprogramu):
         self.pozicijaUprogramu = pozicijaUprogramu
 
+    def asmLabela(self,lbl):
+        if lbl == "main":
+            file.write("F_MAIN\t\t")
+        else:
+            file.write(lbl+"\t\t")
+
     def provjeri(self):
 
         global imeTrenutneFunkcije
@@ -2067,6 +2073,8 @@ class DefinicijaFunkcije(SlozenaNaredba):
             definirana = listaTablica[mjestoDeklaracije][idn][0]
             if definirana:
                 ispisGreske(desnaStrana)
+
+        self.asmLabela(idn)
 
         #DO OVE TOCKE ISTO JE ZA OBE PRODUKCIJE
 
