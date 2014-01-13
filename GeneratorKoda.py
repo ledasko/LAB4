@@ -1159,7 +1159,7 @@ class BinIliIzraz(SlozenaNaredba):
     def getTip(self):
         return self.tip
 
-    def asIli(self):
+    def asmIli(self):
         global trenutniRedIzlaza
         #uzmi dvije vrijednosti sa stoga, or-aj ih i vrati rez na stog
         operand1 = int(stog.pop(-1))
@@ -1231,7 +1231,7 @@ class BinIliIzraz(SlozenaNaredba):
 
             self.tip = "int"
 
-            self.asIli()
+            self.asmIli()
 
             return 0
 
@@ -1281,6 +1281,51 @@ class BinIIzraz(SlozenaNaredba):
     def getTip(self):
         return self.tip
 
+    def asmI(self):
+        global trenutniRedIzlaza
+        #uzmi dvije vrijednosti sa stoga, or-aj ih i vrati rez na stog
+        operand1 = int(stog.pop(-1))
+        operand2 = int(stog.pop(-1))
+        rezultat = operand1&operand2
+
+        stog.append(rezultat)
+
+        reg1 = nadiSlobodniRegistar()
+        zauzetostRegistara[reg1] = 1
+        reg2 = nadiSlobodniRegistar()
+        zauzetostRegistara[reg2] = 1
+        reg3 = nadiSlobodniRegistar()
+        zauzetostRegistara[reg3] = 1
+
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t\t")
+        file.write("POP R"+str(reg1)+"\n")
+        trenutniRedIzlaza += 1
+
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t\t")
+        file.write("POP R"+str(reg2)+'\n')
+        trenutniRedIzlaza += 1
+
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t\t")
+
+        file.write("AND R"+str(reg2)+", R"+str(reg1)+", R"+str(reg3)+"\n")
+        trenutniRedIzlaza += 1
+
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t\t")
+        file.write("PUSH R"+str(reg3)+'\n')
+        trenutniRedIzlaza += 1
+
+        zauzetostRegistara[reg1] = 0
+        zauzetostRegistara[reg2] = 0
+        zauzetostRegistara[reg3] = 0
+
     def provjeri(self):
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
@@ -1307,6 +1352,9 @@ class BinIIzraz(SlozenaNaredba):
                 ispisGreske(desnaStrana)
 
             self.tip = "int"
+
+            self.asmI()
+
             return 0
 
 class JednakosniIzraz(SlozenaNaredba):
