@@ -477,11 +477,12 @@ class InitDeklarator(SlozenaNaredba):
 
     def asmBroj(self,ime,broj):
         global trenutniRedIzlaza
+        broj = str(broj)
         lbl = "G_"+ime
         labele[trenutniRedIzlaza] = lbl
-        file.write(lbl+"\t\tDW %D "+str(broj)+"\n")
+        vrijednostLabele[lbl] = broj
+        file.write(lbl+"\t\tDW %D "+broj+"\n")
         trenutniRedIzlaza += 1
-
 
     def provjeri(self,ntip):
         global BROJ
@@ -973,6 +974,26 @@ class NaredbaSkoka(Naredba):
         global trenutniRedIzlaza
         global IME
 
+        lbl = "G_"+IME
+        for red in labele:
+            if labele[red] == lbl:
+                vrijednost = vrijednostLabele[lbl]
+                stog.append(vrijednost)
+                reg = nadiSlobodniRegistar()
+                lbl1 = imaLiLabele(trenutniRedIzlaza)
+                if not lbl1:
+                    file.write("\t\t\t")
+                file.write("LOAD R"+str(reg)+", ("+lbl+")\n")
+                trenutniRedIzlaza += 1
+
+                lbl1 = imaLiLabele(trenutniRedIzlaza)
+                if not lbl1:
+                    file.write("\t\t\t")
+                file.write("PUSH R"+str(reg)+"\n")
+                trenutniRedIzlaza += 1
+                break
+
+
         zauzetostRegistara[6] = 1
         vrijednostRegistara[6] = stog.pop(-1)
 
@@ -992,6 +1013,7 @@ class NaredbaSkoka(Naredba):
 
     def provjeri(self):
         global imeTrenutneFunkcije
+        global IME
 
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
         brojProdukcije = self.nadiBrojProdukcije(desnaStrana)
@@ -1950,6 +1972,8 @@ class PrimarniIzraz(SlozenaNaredba):
         global BROJ
         global IME
 
+        IME = ""
+
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
         brojProdukcije = self.nadiBrojProdukcije(desnaStrana)
@@ -2239,6 +2263,7 @@ def parametriGeneratora():
     global stog
     global trenutniOperator
     global uFji
+    global vrijednostLabele
 
     #na stogu i u registrima su vrijednosti u stringu
 
@@ -2246,8 +2271,12 @@ def parametriGeneratora():
     trenutniOperator = '+'
     uFji = 0
     trenutniRedIzlaza = 0
+
     #key je redak, a value je labela
     labele = {}
+
+    #key je labela, a value vrijednost
+    vrijednostLabele = {}
 
     zauzetostRegistara = {}
     vrijednostRegistara = {}
