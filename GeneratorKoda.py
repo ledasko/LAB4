@@ -745,6 +745,23 @@ class ListaParametara(SlozenaNaredba):
         self.pozicijaUprogramu = pozicijaUprogramu
         self.tipovi_imena = []
 
+    def asmJedanParam(self):
+        global trenutniRedIzlaza
+
+        reg = nadiSlobodniRegistar()
+
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t\t")
+        file.write("LOAD R"+str(reg)+", (R7+4)\n")
+        trenutniRedIzlaza += 1
+
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t\t")
+        file.write("PUSH R"+str(reg)+"\n")
+        trenutniRedIzlaza += 1
+
     def provjeri(self):
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
@@ -759,6 +776,8 @@ class ListaParametara(SlozenaNaredba):
             tmp.append(ime)
 
             self.tipovi_imena.append(tmp)
+
+            self.asmJedanParam()
 
             return self.tipovi_imena
 
@@ -978,7 +997,6 @@ class NaredbaSkoka(Naredba):
         for red in labele:
             if labele[red] == lbl:
                 vrijednost = vrijednostLabele[lbl]
-                stog.append(vrijednost)
                 reg = nadiSlobodniRegistar()
                 lbl1 = imaLiLabele(trenutniRedIzlaza)
                 if not lbl1:
@@ -995,7 +1013,6 @@ class NaredbaSkoka(Naredba):
 
 
         zauzetostRegistara[6] = 1
-        vrijednostRegistara[6] = stog.pop(-1)
 
         lbl = imaLiLabele(trenutniRedIzlaza)
         if not lbl:
@@ -1202,19 +1219,6 @@ class BinIliIzraz(SlozenaNaredba):
 
     def asmIli(self):
         global trenutniRedIzlaza
-        #uzmi dvije vrijednosti sa stoga, or-aj ih i vrati rez na stog
-        operand1 = int(stog.pop(-1))
-        operand2 = int(stog.pop(-1))
-        rezultat = operand1|operand2
-
-        stog.append(rezultat)
-
-        reg1 = nadiSlobodniRegistar()
-        zauzetostRegistara[reg1] = 1
-        reg2 = nadiSlobodniRegistar()
-        zauzetostRegistara[reg2] = 1
-        reg3 = nadiSlobodniRegistar()
-        zauzetostRegistara[reg3] = 1
 
         lbl = imaLiLabele(trenutniRedIzlaza)
         if not lbl:
@@ -1287,12 +1291,6 @@ class BinXiliIzraz(SlozenaNaredba):
 
     def asmXIli(self):
         global trenutniRedIzlaza
-        #uzmi dvije vrijednosti sa stoga, or-aj ih i vrati rez na stog
-        operand1 = int(stog.pop(-1))
-        operand2 = int(stog.pop(-1))
-        rezultat = operand1^operand2
-
-        stog.append(rezultat)
 
         reg1 = nadiSlobodniRegistar()
         zauzetostRegistara[reg1] = 1
@@ -1372,12 +1370,6 @@ class BinIIzraz(SlozenaNaredba):
 
     def asmI(self):
         global trenutniRedIzlaza
-        #uzmi dvije vrijednosti sa stoga, or-aj ih i vrati rez na stog
-        operand1 = int(stog.pop(-1))
-        operand2 = int(stog.pop(-1))
-        rezultat = operand1&operand2
-
-        stog.append(rezultat)
 
         reg1 = nadiSlobodniRegistar()
         zauzetostRegistara[reg1] = 1
@@ -1532,15 +1524,6 @@ class AditivniIzraz(SlozenaNaredba):
 
     def asmzbroji(self,operator):
         global trenutniRedIzlaza
-        #uzmi dvije vrijednosti sa stoga, zbroji ih i vrati rez na stog
-        operand1 = int(stog.pop(-1))
-        operand2 = int(stog.pop(-1))
-        if operator == '+':
-            rezultat = operand2+operand1
-        else:
-            rezultat = operand2-operand1
-
-        stog.append(str(rezultat))
 
         reg1 = nadiSlobodniRegistar()
         zauzetostRegistara[reg1] = 1
@@ -1758,7 +1741,6 @@ class PostfiksIzraz(SlozenaNaredba):
     def asmVoid(self,imeFje):
         global trenutniRedIzlaza
         global vrijednostRegistara
-        stog.append(vrijednostRegistara[6])
 
         lbl = imaLiLabele(trenutniRedIzlaza)
         if not lbl:
@@ -1944,8 +1926,6 @@ class PrimarniIzraz(SlozenaNaredba):
             operator = ''
         else:
             operator  = '-'
-
-        stog.append(operator+broj)
 
         #oznaci trenutni registar kao zauzet i daj mu vrijednost
         #zauzetostRegistara[trenRegistar] = 1
@@ -2260,14 +2240,10 @@ def parametriGeneratora():
     global labele
     global zauzetostRegistara
     global vrijednostRegistara
-    global stog
     global trenutniOperator
     global uFji
     global vrijednostLabele
 
-    #na stogu i u registrima su vrijednosti u stringu
-
-    stog = []
     trenutniOperator = '+'
     uFji = 0
     trenutniRedIzlaza = 0
