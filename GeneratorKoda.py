@@ -1990,7 +1990,6 @@ class PrimarniIzraz(SlozenaNaredba):
             if broj < -2147483648 or broj > 2147483647:
                 ispisGreske(desnaStrana)
 
-
             self.tip = "int"
 
             if uFji:
