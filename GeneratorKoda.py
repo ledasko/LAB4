@@ -682,12 +682,12 @@ class IzravniDeklarator(SlozenaNaredba):
             if ntip == 'void':
                 ispisGreske(desnaStrana)
 
-            deklarirano = jeliDeklariranoLokalno(idn)
+            deklarirano = jeliDeklariranoLokalno(self.idn)
 
             if deklarirano:
                 ispisGreske(desnaStrana)
 
-            zabiljeziIDNkaol_izraz(idn,ntip)
+            zabiljeziIDNkaol_izraz(self.idn,ntip)
 
             return ntip
 
