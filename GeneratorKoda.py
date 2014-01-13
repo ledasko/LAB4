@@ -476,6 +476,11 @@ class InitDeklarator(SlozenaNaredba):
             return False
 
     def asmBroj(self,ime,broj):
+        global trenutniRedIzlaza
+        lbl = "G_"+ime
+        labele[trenutniRedIzlaza] = lbl
+        file.write(lbl+"\t\tDW %D "+str(broj)+"\n")
+        trenutniRedIzlaza += 1
 
 
     def provjeri(self,ntip):
@@ -485,11 +490,6 @@ class InitDeklarator(SlozenaNaredba):
         izravni_deklarator = IzravniDeklarator(desnaStrana[0][1])
         tip = izravni_deklarator.provjeri(ntip)
         ime = izravni_deklarator.getIdn()
-        print tip
-        print ime
-
-        if tip == 'int':
-            self.asmBroj(ime,BROJ)
 
         if len(desnaStrana) > 1:
 
@@ -526,6 +526,8 @@ class InitDeklarator(SlozenaNaredba):
             elif "niz(const" in tip:
                 ispisGreske(desnaStrana)
 
+        if tip == 'int':
+            self.asmBroj(ime,BROJ)
 
 class ListaIzrazaPridruzivanja(SlozenaNaredba):
 
@@ -2101,7 +2103,7 @@ class DefinicijaFunkcije(SlozenaNaredba):
         pass
 
     def provjeri(self):
-
+        global uFji
         global imeTrenutneFunkcije
 
         uFji = 1
