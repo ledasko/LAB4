@@ -971,6 +971,8 @@ class NaredbaSkoka(Naredba):
         file.write("RET\n")
         trenutniRedIzlaza += 1
 
+        zauzetostRegistara[6] = 0
+
     def provjeri(self):
         global imeTrenutneFunkcije
 
