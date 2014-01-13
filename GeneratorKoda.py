@@ -971,6 +971,7 @@ class NaredbaSkoka(Naredba):
 
     def asmreturn(self):
         global trenutniRedIzlaza
+        global IME
 
         zauzetostRegistara[6] = 1
         vrijednostRegistara[6] = stog.pop(-1)
@@ -1749,7 +1750,6 @@ class PostfiksIzraz(SlozenaNaredba):
         file.write("PUSH R6\n")
         trenutniRedIzlaza += 1
 
-
     def asmParametri(self):
         pass
 
@@ -1948,6 +1948,7 @@ class PrimarniIzraz(SlozenaNaredba):
     def provjeri(self):
         global jeliFja
         global BROJ
+        global IME
 
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
@@ -1957,6 +1958,7 @@ class PrimarniIzraz(SlozenaNaredba):
             idn = izluciIDN(desnaStrana[0][0])
 
             self.ime = idn
+            IME = idn
 
             rezultat = jeliDeklariranoIgdje(idn)
 
