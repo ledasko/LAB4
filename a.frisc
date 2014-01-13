@@ -13,8 +13,6 @@ F			LOAD R0, (R7+4)
 			POP R6
 			RET
 			
-	
-
 F_MAIN		MOVE %D 7, R0
 			PUSH R0
 			CALL F

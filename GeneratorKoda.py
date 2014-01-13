@@ -11,7 +11,7 @@ def nadiSlobodniRegistar():
     return trenRegistar
 
 def imaLiLabele(redak):
-    global albele
+    global labele
     if redak in labele:
         return 1
     else:
@@ -1891,7 +1891,7 @@ class PrimarniIzraz(SlozenaNaredba):
             elif tmp == 'NIZ_ZNAKOVA':
                 return 4
 
-    def asmbroj(self,broj):
+    def asmBroj(self,broj):
         global trenutniRedIzlaza
         global trenutniOperator
         broj = str(broj)
@@ -1924,6 +1924,9 @@ class PrimarniIzraz(SlozenaNaredba):
             file.write("\t\t\t")
         file.write("PUSH R"+trenRegistar+"\n")
         trenutniRedIzlaza += 1
+
+    def asmZnak(self,znak):
+        print znak
 
     def provjeri(self):
         global jeliFja
@@ -1973,7 +1976,7 @@ class PrimarniIzraz(SlozenaNaredba):
 
             self.tip = "int"
 
-            self.asmbroj(broj)
+            self.asmBroj(broj)
 
             return 0
 
@@ -1994,6 +1997,8 @@ class PrimarniIzraz(SlozenaNaredba):
 
             else:
                 ispisGreske(desnaStrana)
+
+            self.asmZnak(znak)
 
         elif brojProdukcije == 4:
             niz_znakova=izluciIDN(desnaStrana[0][0])
@@ -2202,7 +2207,6 @@ def otvoriFileZaIzlaz():
     file.write(inicijalniZapis)
     trenutniRedIzlaza = 5
 
-    labele[trenutniRedIzlaza] = "F_MAIN"
 
 def parametriGeneratora():
     global trenutniRedIzlaza
