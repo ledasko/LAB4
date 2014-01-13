@@ -2041,10 +2041,15 @@ class DefinicijaFunkcije(SlozenaNaredba):
         self.pozicijaUprogramu = pozicijaUprogramu
 
     def asmLabela(self,lbl):
+        global labele
+        global trenutniRedIzlaza
         if lbl == "main":
             file.write("F_MAIN\t\t")
         else:
             file.write(lbl+"\t\t")
+
+        labele[trenutniRedIzlaza] = lbl
+
 
     def provjeri(self):
 
