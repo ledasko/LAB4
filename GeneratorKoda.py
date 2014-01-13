@@ -1894,6 +1894,7 @@ class PrimarniIzraz(SlozenaNaredba):
     def asmBroj(self,broj):
         global trenutniRedIzlaza
         global trenutniOperator
+
         broj = str(broj)
         trenRegistar = nadiSlobodniRegistar()
 
@@ -2082,10 +2083,11 @@ class DefinicijaFunkcije(SlozenaNaredba):
     def asmParametri(self):
         pass
 
-
     def provjeri(self):
 
         global imeTrenutneFunkcije
+
+        uFji = 1
 
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
@@ -2133,6 +2135,8 @@ class DefinicijaFunkcije(SlozenaNaredba):
 
             slozena_naredba = SlozenaNaredba(desnaStrana[5][1])
             slozena_naredba.provjeri()
+
+        uFji = 0
 
 class ImeTipa(SlozenaNaredba):
 
@@ -2207,7 +2211,6 @@ def otvoriFileZaIzlaz():
     file.write(inicijalniZapis)
     trenutniRedIzlaza = 5
 
-
 def parametriGeneratora():
     global trenutniRedIzlaza
     global labele
@@ -2215,12 +2218,13 @@ def parametriGeneratora():
     global vrijednostRegistara
     global stog
     global trenutniOperator
+    global uFji
 
     #na stogu i u registrima su vrijednosti u stringu
 
     stog = []
     trenutniOperator = '+'
-
+    uFji = 0
     trenutniRedIzlaza = 0
     #key je redak, a value je labela
     labele = {}
