@@ -2170,6 +2170,8 @@ def parametriGeneratora():
     global stog
     global trenutniOperator
 
+    #na stogu i u registrima su vrijednosti u stringu
+
     stog = []
     trenutniOperator = '+'
 
