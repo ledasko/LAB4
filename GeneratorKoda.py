@@ -1346,6 +1346,7 @@ class AditivniIzraz(SlozenaNaredba):
         return self.tip
 
     def asmzbroji(self,operator):
+        global trenutniRedakIzlaza
         #uzmi dvije vrijednosti sa stoga, zbroji ih i vrati rez na stog
         operand1 = stog.pop(-1)
         operand2 = stog.pop(-1)
@@ -1353,6 +1354,14 @@ class AditivniIzraz(SlozenaNaredba):
             rezultat = operand1+operand2
         else:
             rezultat = operand1+operand2
+        stog.append(rezultat)
+
+        reg1 = nadiSlobodniRegistar()
+        reg2 = nadiSlobodniRegistar()
+
+        lbl = imaLiLabele(trenutniRedakIzlaza)
+
+
 
     def provjeri(self):
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
@@ -1694,8 +1703,8 @@ class PrimarniIzraz(SlozenaNaredba):
             operator  = '-'
 
         #oznaci trenutni registar kao zauzet i daj mu vrijednost
-        zauzetostRegistara[trenRegistar] = 1
-        vrijednostRegistara[trenRegistar] = operator+broj
+        #zauzetostRegistara[trenRegistar] = 1
+        #vrijednostRegistara[trenRegistar] = operator+broj
 
         trenRegistar = str(trenRegistar)
         lbl = imaLiLabele(trenutniRedIzlaza)
