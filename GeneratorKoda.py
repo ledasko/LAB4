@@ -1716,6 +1716,27 @@ class PostfiksIzraz(SlozenaNaredba):
         else:
             return 1
 
+    def asmVoid(self,imeFje):
+        global trenutniRedIzlaza
+        global vrijednostRegistara
+        stog.append(vrijednostRegistara[6])
+
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t\t")
+        file.write("CALL "+imeFje+"\n")
+        trenutniRedIzlaza += 1
+
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t\t")
+        file.write("PUSH R6\n")
+        trenutniRedIzlaza += 1
+
+
+    def asmParametri(self):
+        pass
+
     def provjeri(self):
 
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
@@ -1785,6 +1806,9 @@ class PostfiksIzraz(SlozenaNaredba):
                 ispisGreske(desnaStrana)
 
             self.tip = tipFje
+
+            self.asmVoid(imeFje)
+
             return 0
 
         elif desnaStrana[2][0] == "<lista_argumenata>":
@@ -2050,6 +2074,9 @@ class DefinicijaFunkcije(SlozenaNaredba):
 
         labele[trenutniRedIzlaza] = lbl
 
+    def asmParametri(self):
+        pass
+
 
     def provjeri(self):
 
@@ -2092,6 +2119,8 @@ class DefinicijaFunkcije(SlozenaNaredba):
             slozena_naredba = SlozenaNaredba(desnaStrana[5][1])
             slozena_naredba.zabiljeziParametre(listaParametara)
             slozena_naredba.provjeri()
+
+            self.asmParametri()
 
         else:
             #ako postoji deklaracija vec od prije, ova zabiljeska ce je prepisati
