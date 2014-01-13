@@ -1348,13 +1348,14 @@ class AditivniIzraz(SlozenaNaredba):
     def asmzbroji(self,operator):
         global trenutniRedIzlaza
         #uzmi dvije vrijednosti sa stoga, zbroji ih i vrati rez na stog
-        operand1 = stog.pop(-1)
-        operand2 = stog.pop(-1)
+        operand1 = int(stog.pop(-1))
+        operand2 = int(stog.pop(-1))
         if operator == '+':
-            rezultat = operand1+operand2
+            rezultat = operand2+operand1
         else:
-            rezultat = operand1+operand2
-        stog.append(rezultat)
+            rezultat = operand2-operand1
+
+        stog.append(str(rezultat))
 
         reg1 = nadiSlobodniRegistar()
         zauzetostRegistara[reg1] = 1
@@ -1383,7 +1384,7 @@ class AditivniIzraz(SlozenaNaredba):
             file.write("ADD ")
         else:
             file.write("SUB ")
-        file.write("R"+str(reg1)+", R"+str(reg2)+", R"+str(reg3)+"\n")
+        file.write("R"+str(reg2)+", R"+str(reg1)+", R"+str(reg3)+"\n")
         trenutniRedIzlaza += 1
 
         lbl = imaLiLabele(trenutniRedIzlaza)
@@ -1395,7 +1396,6 @@ class AditivniIzraz(SlozenaNaredba):
         zauzetostRegistara[reg1] = 0
         zauzetostRegistara[reg2] = 0
         zauzetostRegistara[reg3] = 0
-
 
     def provjeri(self):
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
@@ -1731,12 +1731,12 @@ class PrimarniIzraz(SlozenaNaredba):
             print "Nema slobodnih registara"
             exit(-1)
 
-        stog.append(trenRegistar)
-
         if trenutniOperator == '+':
             operator = ''
         else:
             operator  = '-'
+
+        stog.append(operator+broj)
 
         #oznaci trenutni registar kao zauzet i daj mu vrijednost
         #zauzetostRegistara[trenRegistar] = 1
