@@ -762,6 +762,9 @@ class ListaParametara(SlozenaNaredba):
         file.write("PUSH R"+str(reg)+"\n")
         trenutniRedIzlaza += 1
 
+    def asmViseParam(self):
+        pass
+
     def provjeri(self):
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
@@ -798,6 +801,8 @@ class ListaParametara(SlozenaNaredba):
                 ispisGreske(desnaStrana)
 
             self.tipovi_imena.append(tmp)
+
+            self.asmViseParam()
 
             return self.tipovi_imena
 
@@ -1754,8 +1759,21 @@ class PostfiksIzraz(SlozenaNaredba):
         file.write("PUSH R6\n")
         trenutniRedIzlaza += 1
 
-    def asmParametri(self):
-        pass
+    def asmParametri(self,imeFje):
+        global trenutniRedIzlaza
+
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t\t")
+        file.write("CALL "+imeFje+"\n")
+        trenutniRedIzlaza += 1
+
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t\t")
+        file.write("PUSH R6\n")
+        trenutniRedIzlaza += 1
+
 
     def provjeri(self):
 
@@ -1875,6 +1893,9 @@ class PostfiksIzraz(SlozenaNaredba):
 
 
             self.tip = tipFje
+
+            self.asmParametri(imeFje)
+
             return 0
 
 class PrimarniIzraz(SlozenaNaredba):
@@ -2104,9 +2125,6 @@ class DefinicijaFunkcije(SlozenaNaredba):
 
         labele[trenutniRedIzlaza] = lbl
 
-    def asmParametri(self):
-        pass
-
     def provjeri(self):
         global uFji
         global imeTrenutneFunkcije
@@ -2150,8 +2168,6 @@ class DefinicijaFunkcije(SlozenaNaredba):
             slozena_naredba = SlozenaNaredba(desnaStrana[5][1])
             slozena_naredba.zabiljeziParametre(listaParametara)
             slozena_naredba.provjeri()
-
-            self.asmParametri()
 
         else:
             #ako postoji deklaracija vec od prije, ova zabiljeska ce je prepisati
