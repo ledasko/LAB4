@@ -1346,7 +1346,7 @@ class AditivniIzraz(SlozenaNaredba):
         return self.tip
 
     def asmzbroji(self,operator):
-        global trenutniRedakIzlaza
+        global trenutniRedIzlaza
         #uzmi dvije vrijednosti sa stoga, zbroji ih i vrati rez na stog
         operand1 = stog.pop(-1)
         operand2 = stog.pop(-1)
@@ -1357,12 +1357,16 @@ class AditivniIzraz(SlozenaNaredba):
         stog.append(rezultat)
 
         reg1 = nadiSlobodniRegistar()
+        zauzetostRegistara[reg1] = 1
         reg2 = nadiSlobodniRegistar()
+        zauzetostRegistara[reg2] = 1
+        reg3 = nadiSlobodniRegistar()
+        zauzetostRegistara[reg3] = 1
 
         lbl = imaLiLabele(trenutniRedIzlaza)
         if not lbl:
             file.write("\t\t\t")
-        file.write("POP R"+str(reg1))
+        file.write("POP R"+str(reg1)+"\n")
         trenutniRedIzlaza += 1
 
         lbl = imaLiLabele(trenutniRedIzlaza)
@@ -1379,8 +1383,18 @@ class AditivniIzraz(SlozenaNaredba):
             file.write("ADD ")
         else:
             file.write("SUB ")
-
+        file.write("R"+str(reg1)+", R"+str(reg2)+", R"+str(reg3)+"\n")
         trenutniRedIzlaza += 1
+
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t\t")
+        file.write("PUSH R"+str(reg3)+'\n')
+        trenutniRedIzlaza += 1
+
+        zauzetostRegistara[reg1] = 0
+        zauzetostRegistara[reg2] = 0
+        zauzetostRegistara[reg3] = 0
 
 
     def provjeri(self):
@@ -1408,7 +1422,9 @@ class AditivniIzraz(SlozenaNaredba):
 
             self.tip = "int"
 
-            self.asmzbroji()
+            op = izluciIDN(desnaStrana[1][0])
+
+            self.asmzbroji(op)
 
             return 0
 
