@@ -2156,7 +2156,7 @@ def otvoriFileZaIzlaz():
     global file
 
     file = open("b.frisc","w")
-    inicijalniZapis = "\t\t\tMOVE 40000, R7\n\t\t\tCALL F_MAIN\n\t\t\tHALT\n\nF_MAIN\t\t"
+    inicijalniZapis = "\t\t\tMOVE 40000, R7\n\t\t\tCALL F_MAIN\n\t\t\tHALT\n\n"
     file.write(inicijalniZapis)
     trenutniRedIzlaza = 5
 
