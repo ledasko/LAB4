@@ -1359,8 +1359,28 @@ class AditivniIzraz(SlozenaNaredba):
         reg1 = nadiSlobodniRegistar()
         reg2 = nadiSlobodniRegistar()
 
-        lbl = imaLiLabele(trenutniRedakIzlaza)
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t\t")
+        file.write("POP R"+str(reg1))
+        trenutniRedIzlaza += 1
 
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t\t")
+        file.write("POP R"+str(reg2)+'\n')
+        trenutniRedIzlaza += 1
+
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t\t")
+
+        if operator == '+':
+            file.write("ADD ")
+        else:
+            file.write("SUB ")
+
+        trenutniRedIzlaza += 1
 
 
     def provjeri(self):
