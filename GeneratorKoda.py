@@ -1345,6 +1345,15 @@ class AditivniIzraz(SlozenaNaredba):
     def getTip(self):
         return self.tip
 
+    def asmzbroji(self,operator):
+        #uzmi dvije vrijednosti sa stoga, zbroji ih i vrati rez na stog
+        operand1 = stog.pop(-1)
+        operand2 = stog.pop(-1)
+        if operator == '+':
+            rezultat = operand1+operand2
+        else:
+            rezultat = operand1+operand2
+
     def provjeri(self):
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
@@ -1369,6 +1378,9 @@ class AditivniIzraz(SlozenaNaredba):
                 ispisGreske(desnaStrana)
 
             self.tip = "int"
+
+            self.asmzbroji()
+
             return 0
 
 class MultiplikativniIzraz(SlozenaNaredba):
