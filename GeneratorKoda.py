@@ -1470,6 +1470,9 @@ class UnarniIzraz(SlozenaNaredba):
             self.tip = "int"
             return 0
         else:
+            unarni_operator = UnarniOperator(desnaStrana[0][1])
+            unarni_operator.provjeri()
+
             cast_izraz = CastIzraz(desnaStrana[1][1])
             l_izraz = cast_izraz.provjeri()
             self.tip = cast_izraz.getTip()
@@ -1486,9 +1489,10 @@ class UnarniOperator(SlozenaNaredba):
         self.pozicijaUprogramu = pozicijaUprogramu
 
     def provjeri(self):
+        global trenutniOperator
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
-        return 0
+        trenutniOperator = izluciIDN(desnaStrana[0][0])
 
 class PostfiksIzraz(SlozenaNaredba):
 
@@ -1662,6 +1666,7 @@ class PrimarniIzraz(SlozenaNaredba):
 
     def asmbroj(self,broj):
         global trenutniRedIzlaza
+        global trenutniOperator
         broj = str(broj)
         trenRegistar = nadiSlobodniRegistar()
 
@@ -1670,12 +1675,21 @@ class PrimarniIzraz(SlozenaNaredba):
             exit(-1)
 
         stog.append(trenRegistar)
-        trenRegistar = str(trenRegistar)
 
+        if trenutniOperator == '+':
+            operator = ''
+        else:
+            operator  = '-'
+
+        #oznaci trenutni registar kao zauzet i daj mu vrijednost
+        zauzetostRegistara[trenRegistar] = 1
+        vrijednostRegistara[trenRegistar] = operator+broj
+
+        trenRegistar = str(trenRegistar)
         lbl = imaLiLabele(trenutniRedIzlaza)
         if not lbl:
             file.write("\t\t\t")
-        file.write("MOVE %D "+broj+", R"+trenRegistar+"\n")
+        file.write("MOVE %D "+operator+broj+", R"+trenRegistar+"\n")
         trenutniRedIzlaza += 1
 
         lbl = imaLiLabele(trenutniRedIzlaza)
@@ -1951,8 +1965,10 @@ def parametriGeneratora():
     global zauzetostRegistara
     global vrijednostRegistara
     global stog
+    global trenutniOperator
 
     stog = []
+    trenutniOperator = '+'
 
     trenutniRedIzlaza = 0
     #key je redak, a value je labela
