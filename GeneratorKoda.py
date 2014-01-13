@@ -475,12 +475,21 @@ class InitDeklarator(SlozenaNaredba):
         else:
             return False
 
+    def asmBroj(self,ime,broj):
+
+
     def provjeri(self,ntip):
         global BROJ
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
         izravni_deklarator = IzravniDeklarator(desnaStrana[0][1])
         tip = izravni_deklarator.provjeri(ntip)
+        ime = izravni_deklarator.getIdn()
+        print tip
+        print ime
+
+        if tip == 'int':
+            self.asmBroj(ime,BROJ)
 
         if len(desnaStrana) > 1:
 
@@ -511,12 +520,12 @@ class InitDeklarator(SlozenaNaredba):
             else:
                 ispisGreske(desnaStrana)
 
-
         else:
             if "const" in tip:
                 ispisGreske(desnaStrana)
             elif "niz(const" in tip:
                 ispisGreske(desnaStrana)
+
 
 class ListaIzrazaPridruzivanja(SlozenaNaredba):
 
@@ -654,7 +663,7 @@ class IzravniDeklarator(SlozenaNaredba):
     def getBroj(self):
         return self.broj
 
-    def getIDN(self):
+    def getIdn(self):
         return self.idn
 
     def nadiBrojProdukcjie(self,desnaStrana):
@@ -695,7 +704,7 @@ class IzravniDeklarator(SlozenaNaredba):
             if ntip == 'void':
                 ispisGreske(desnaStrana)
 
-            if jeliDeklariranoLokalno(idn):
+            if jeliDeklariranoLokalno(self.idn):
                 ispisGreske(desnaStrana)
 
             self.broj = izluciIDN(desnaStrana[2][0])
