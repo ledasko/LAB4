@@ -458,6 +458,7 @@ class ListaInitDeklaratora(Deklaracija):
             init_deklarator.provjeri(ntip)
 
 class InitDeklarator(SlozenaNaredba):
+
     def __init__(self,pozicijaUprogramu):
         self.pozicijaUprogramu = pozicijaUprogramu
 
@@ -475,6 +476,7 @@ class InitDeklarator(SlozenaNaredba):
             return False
 
     def provjeri(self,ntip):
+        global BROJ
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
         izravni_deklarator = IzravniDeklarator(desnaStrana[0][1])
@@ -484,7 +486,6 @@ class InitDeklarator(SlozenaNaredba):
 
             inicijalizator = Inicijalizator(desnaStrana[2][1])
             tipovi = inicijalizator.provjeri()
-
 
             dbrElem = izravni_deklarator.getBroj()
             ibrElem = inicijalizator.getbrElem()
@@ -648,9 +649,13 @@ class IzravniDeklarator(SlozenaNaredba):
     def __init__(self,pozicijaUprogramu):
         self.pozicijaUprogramu = pozicijaUprogramu
         self.broj=0
+        self.idn = ""
 
     def getBroj(self):
         return self.broj
+
+    def getIDN(self):
+        return self.idn
 
     def nadiBrojProdukcjie(self,desnaStrana):
 
@@ -670,7 +675,7 @@ class IzravniDeklarator(SlozenaNaredba):
 
         brojProdukcije = self.nadiBrojProdukcjie(desnaStrana)
 
-        idn = izluciIDN(desnaStrana[0][0])
+        self.idn = izluciIDN(desnaStrana[0][0])
 
         if brojProdukcije == 1:
             #IDN je sam
@@ -702,12 +707,12 @@ class IzravniDeklarator(SlozenaNaredba):
 
             tip = "niz("+ntip+")"
 
-            zabiljeziIDN(idn,tip)
+            zabiljeziIDN(self.idn,tip)
 
             return tip
 
         elif brojProdukcije == 3:
-            zabiljeziDeklaracijuFunkcije(idn,ntip,"void")
+            zabiljeziDeklaracijuFunkcije(self.idn,ntip,"void")
 
             #nesto treba vratit
             return ntip
@@ -717,7 +722,7 @@ class IzravniDeklarator(SlozenaNaredba):
             #listaParametara je oblika lista listi koje imaju clanove [tip,ime]
             listaParametara = lista_parametara.provjeri()
 
-            zabiljeziDeklaracijuFunkcije(idn,ntip,listaParametara)
+            zabiljeziDeklaracijuFunkcije(self.idn,ntip,listaParametara)
 
             #nesto treba vratit
             return ntip
@@ -1931,6 +1936,7 @@ class PrimarniIzraz(SlozenaNaredba):
 
     def provjeri(self):
         global jeliFja
+        global BROJ
 
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
@@ -1960,7 +1966,6 @@ class PrimarniIzraz(SlozenaNaredba):
 
             return l_izraz
 
-
         elif brojProdukcije == 2:
 
             broj = izluciIDN(desnaStrana[0][0])
@@ -1977,7 +1982,10 @@ class PrimarniIzraz(SlozenaNaredba):
 
             self.tip = "int"
 
-            self.asmBroj(broj)
+            if uFji:
+                self.asmBroj(broj)
+            else:
+                BROJ = broj
 
             return 0
 
