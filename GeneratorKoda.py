@@ -1771,6 +1771,12 @@ class PostfiksIzraz(SlozenaNaredba):
         lbl = imaLiLabele(trenutniRedIzlaza)
         if not lbl:
             file.write("\t\t\t")
+        file.write("ADD R7, 4, R7\n")
+        trenutniRedIzlaza += 1
+
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t\t")
         file.write("PUSH R6\n")
         trenutniRedIzlaza += 1
 
