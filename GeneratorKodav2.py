@@ -1229,6 +1229,33 @@ class BinXiliIzraz(SlozenaNaredba):
     def getTip(self):
         return self.tip
 
+    def asmXIli(self):
+        global trenutniRedIzlaza
+
+        reg1 = nadiSlobodniRegistar()
+        zauzetostRegistara[reg1] = 1
+        reg2 = nadiSlobodniRegistar()
+        zauzetostRegistara[reg2] = 1
+        reg3 = nadiSlobodniRegistar()
+        zauzetostRegistara[reg3] = 1
+
+        file.write("\t\t\tPOP R"+str(reg1)+"\n")
+        trenutniRedIzlaza += 1
+
+        file.write("\t\t\tPOP R"+str(reg2)+'\n')
+        trenutniRedIzlaza += 1
+
+        file.write("\t\t\tXOR ")
+        file.write("R"+str(reg2)+", R"+str(reg1)+", R"+str(reg3)+"\n")
+        trenutniRedIzlaza += 1
+
+        file.write("\t\t\tPUSH R"+str(reg3)+'\n')
+        trenutniRedIzlaza += 1
+
+        zauzetostRegistara[reg1] = 0
+        zauzetostRegistara[reg2] = 0
+        zauzetostRegistara[reg3] = 0
+
     def provjeri(self):
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
@@ -1255,6 +1282,9 @@ class BinXiliIzraz(SlozenaNaredba):
                 ispisGreske(desnaStrana)
 
             self.tip = "int"
+
+            self.asmXIli()
+
             return 0
 
 class BinIIzraz(SlozenaNaredba):
@@ -1265,6 +1295,33 @@ class BinIIzraz(SlozenaNaredba):
 
     def getTip(self):
         return self.tip
+
+    def asmI(self):
+        global trenutniRedIzlaza
+
+        reg1 = nadiSlobodniRegistar()
+        zauzetostRegistara[reg1] = 1
+        reg2 = nadiSlobodniRegistar()
+        zauzetostRegistara[reg2] = 1
+        reg3 = nadiSlobodniRegistar()
+        zauzetostRegistara[reg3] = 1
+
+        file.write("\t\t\tPOP R"+str(reg1)+"\n")
+        trenutniRedIzlaza += 1
+
+        file.write("\t\t\tPOP R"+str(reg2)+'\n')
+        trenutniRedIzlaza += 1
+
+        file.write("\t\t\tAND ")
+        file.write("R"+str(reg2)+", R"+str(reg1)+", R"+str(reg3)+"\n")
+        trenutniRedIzlaza += 1
+
+        file.write("\t\t\tPUSH R"+str(reg3)+'\n')
+        trenutniRedIzlaza += 1
+
+        zauzetostRegistara[reg1] = 0
+        zauzetostRegistara[reg2] = 0
+        zauzetostRegistara[reg3] = 0
 
     def provjeri(self):
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
@@ -1292,6 +1349,9 @@ class BinIIzraz(SlozenaNaredba):
                 ispisGreske(desnaStrana)
 
             self.tip = "int"
+
+            self.asmI()
+
             return 0
 
 class JednakosniIzraz(SlozenaNaredba):
