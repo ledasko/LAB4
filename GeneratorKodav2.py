@@ -989,6 +989,11 @@ class Izraz(SlozenaNaredba):
     def getTip(self):
         return self.tip
 
+    def asmIzraz(self):
+        global trenutniRedIzlaza
+        file.write("\t\t\tPOP R6\n")
+        trenutniRedIzlaza += 1
+
     def provjeri(self):
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
@@ -997,6 +1002,8 @@ class Izraz(SlozenaNaredba):
             l_izraz = izraz_pridruzivanja.provjeri()
 
             self.tip = izraz_pridruzivanja.getTip()
+
+            self.asmIzraz()
 
             return l_izraz
 
@@ -1347,7 +1354,6 @@ class AditivniIzraz(SlozenaNaredba):
         zauzetostRegistara[reg1] = 0
         zauzetostRegistara[reg2] = 0
         zauzetostRegistara[reg3] = 0
-
 
     def provjeri(self):
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
