@@ -2,9 +2,7 @@
 			CALL main
 			HALT
 
-f			LOAD R0, (x)
-			PUSH R0
-			MOVE %D 5, R0
+f			MOVE %D 5, R0
 			PUSH R0
 			POP R0
 			POP R1

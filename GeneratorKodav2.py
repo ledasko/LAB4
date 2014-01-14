@@ -737,6 +737,8 @@ class ListaParametara(SlozenaNaredba):
         self.tipovi_imena = []
 
     def provjeri(self):
+        global parametri
+        parametri = []
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
         if desnaStrana[0][0] == "<deklaracija_parametra>":
@@ -748,6 +750,8 @@ class ListaParametara(SlozenaNaredba):
             ime = deklaracija_parametara.getIdn()
             tmp.append(tip)
             tmp.append(ime)
+
+            parametri.append(ime)
 
             self.tipovi_imena.append(tmp)
 
@@ -763,6 +767,9 @@ class ListaParametara(SlozenaNaredba):
             tmp = []
             tip = deklaracija_parametara.getTip()
             ime = deklaracija_parametara.getIdn()
+
+            parametri.append(ime)
+
             tmp.append(tip)
             tmp.append(ime)
 
