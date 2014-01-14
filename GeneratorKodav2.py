@@ -1639,6 +1639,7 @@ class PrimarniIzraz(SlozenaNaredba):
 
         file.write("\t\t\tLOAD R"+str(reg)+", ("+self.ime+")\n")
         trenutniRedIzlaza += 1
+        file.write("\t\t\tPUSH R"+str(reg)+"\n")
 
     def provjeri(self):
         global jeliFja

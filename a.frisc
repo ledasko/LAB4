@@ -3,4 +3,6 @@
 			HALT
 
 			LOAD R0, (x)
+			PUSH R0
 			LOAD R0, (y)
+			PUSH R0
