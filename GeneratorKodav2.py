@@ -1708,34 +1708,17 @@ class PrimarniIzraz(SlozenaNaredba):
 
     def asmBroj(self,broj):
         global trenutniRedIzlaza
-        global trenutniOperator
+        reg = nadiSlobodniRegistar()
 
-        trenRegistar = nadiSlobodniRegistar()
-
-
-        if trenutniOperator == '+':
-            operator = ''
-        else:
-            operator  = '-'
-
-        trenRegistar = str(trenRegistar)
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("MOVE %D "+operator+broj+", R"+trenRegistar+"\n")
+        file.write("\t\t\tMOVE %D "+str(broj)+", R"+str(reg)+"\n")
         trenutniRedIzlaza += 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("PUSH R"+trenRegistar+"\n")
+        file.write("\t\t\tPUSH R"+str(reg)+"\n")
         trenutniRedIzlaza += 1
 
     def asmBrojGlob(self,broj):
         global trenutniRedIzlaza
         file.write(" "+str(broj)+"\n")
         trenutniRedIzlaza += 1
-
 
     def provjeri(self):
         global jeliFja

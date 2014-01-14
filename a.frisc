@@ -2,15 +2,7 @@
 			CALL main
 			HALT
 
-x		DW %D  15
-y		DW %D  16
-main			LOAD R0, (x)
+main			MOVE %D 31, R0
 			PUSH R0
-			LOAD R0, (y)
-			PUSH R0
-			POP R0
-			POP R1
-			ADD R1, R0, R2
-			PUSH R2
 			POP R6
 			RET
