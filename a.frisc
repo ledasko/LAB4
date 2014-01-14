@@ -6,7 +6,5 @@ f			MOVE %D 123, R0
 			PUSH R0
 			POP R6
 			RET
-main			LOAD R0, (f)
-			PUSH R0
-			POP R6
+main			POP R6
 			RET

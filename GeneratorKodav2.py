@@ -1063,7 +1063,7 @@ class IzrazPridruzivanja(SlozenaNaredba):
 
         else:
             postfiks_izraz = PostfiksIzraz(desnaStrana[0][1])
-            l_izraz = postfiks_izraz.provjeri()
+            l_izraz = postfiks_izraz.provjeri(0)
 
             if l_izraz != 1:
                 ispisGreske(desnaStrana)
@@ -1580,7 +1580,7 @@ class UnarniIzraz(SlozenaNaredba):
 
         if desnaStrana[0][0] == "<postfiks_izraz>":
             postfiks_izraz = PostfiksIzraz(desnaStrana[0][1])
-            l_izraz = postfiks_izraz.provjeri()
+            l_izraz = postfiks_izraz.provjeri(0)
             self.tip = postfiks_izraz.getTip()
             return l_izraz
 
