@@ -1598,6 +1598,8 @@ class UnarniIzraz(SlozenaNaredba):
             self.tip = "int"
             return 0
         else:
+            unarni_operator = UnarniOperator(desnaStrana[0][1])
+            unarni_operator.provjeri()
             cast_izraz = CastIzraz(desnaStrana[1][1])
             l_izraz = cast_izraz.provjeri()
             self.tip = cast_izraz.getTip()
@@ -1614,7 +1616,10 @@ class UnarniOperator(SlozenaNaredba):
         self.pozicijaUprogramu = pozicijaUprogramu
 
     def provjeri(self):
+        global trenutniOperator
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
+
+        trenutniOperator = izluciIDN(desnaStrana[0][0])
 
         return 0
 
@@ -1798,16 +1803,29 @@ class PrimarniIzraz(SlozenaNaredba):
 
     def asmBroj(self,broj):
         global trenutniRedIzlaza
+        global trenutniOperator
         reg = nadiSlobodniRegistar()
 
-        file.write("\t\t\tMOVE %D "+str(broj)+", R"+str(reg)+"\n")
+        if trenutniOperator == '+':
+            file.write("\t\t\tMOVE %D "+str(broj)+", R"+str(reg)+"\n")
+
+        else:
+            file.write("\t\t\tMOVE %D -"+str(broj)+", R"+str(reg)+"\n")
+            trenutniOperator = '+'
+
         trenutniRedIzlaza += 1
         file.write("\t\t\tPUSH R"+str(reg)+"\n")
         trenutniRedIzlaza += 1
 
     def asmBrojGlob(self,broj):
         global trenutniRedIzlaza
-        file.write(" "+str(broj)+"\n")
+        global trenutniOperator
+        if trenutniOperator == '+':
+            file.write(" "+str(broj)+"\n")
+        else:
+            file.write(" -"+str(broj)+"\n")
+            trenutniOperator = '+'
+
         trenutniRedIzlaza += 1
 
     def provjeri(self):
@@ -2095,6 +2113,9 @@ def parametriGeneratora():
     global zauzetostRegistara
     global vrijednostRegistara
     global uFji
+    global trenutniOperator
+
+    trenutniOperator = '+'
 
     trenutniRedIzlaza = 0
     uFji = 0
