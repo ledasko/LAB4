@@ -1318,6 +1318,37 @@ class AditivniIzraz(SlozenaNaredba):
     def getTip(self):
         return self.tip
 
+    def asmzbroji(self,operator):
+        global trenutniRedIzlaza
+
+        reg1 = nadiSlobodniRegistar()
+        zauzetostRegistara[reg1] = 1
+        reg2 = nadiSlobodniRegistar()
+        zauzetostRegistara[reg2] = 1
+        reg3 = nadiSlobodniRegistar()
+        zauzetostRegistara[reg3] = 1
+
+        file.write("\t\t\tPOP R"+str(reg1)+"\n")
+        trenutniRedIzlaza += 1
+
+        file.write("\t\t\tPOP R"+str(reg2)+'\n')
+        trenutniRedIzlaza += 1
+
+        if operator == '+':
+            file.write("\t\t\tADD ")
+        else:
+            file.write("\t\t\tSUB ")
+        file.write("R"+str(reg2)+", R"+str(reg1)+", R"+str(reg3)+"\n")
+        trenutniRedIzlaza += 1
+
+        file.write("\t\t\tPUSH R"+str(reg3)+'\n')
+        trenutniRedIzlaza += 1
+
+        zauzetostRegistara[reg1] = 0
+        zauzetostRegistara[reg2] = 0
+        zauzetostRegistara[reg3] = 0
+
+
     def provjeri(self):
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
@@ -1342,6 +1373,11 @@ class AditivniIzraz(SlozenaNaredba):
                 ispisGreske(desnaStrana)
 
             self.tip = "int"
+
+            op = izluciIDN(desnaStrana[1][0])
+
+            self.asmzbroji(op)
+
             return 0
 
 class MultiplikativniIzraz(SlozenaNaredba):

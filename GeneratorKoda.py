@@ -1573,6 +1573,7 @@ class AditivniIzraz(SlozenaNaredba):
         zauzetostRegistara[reg2] = 0
         zauzetostRegistara[reg3] = 0
 
+
     def provjeri(self):
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
