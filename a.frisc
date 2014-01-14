@@ -2,11 +2,17 @@
 			CALL main
 			HALT
 
-f			MOVE %D 123, R0
+f			LOAD R0, (x)
 			PUSH R0
+			MOVE %D 5, R0
+			PUSH R0
+			POP R0
+			POP R1
+			ADD R1, R0, R2
+			PUSH R2
 			POP R6
 			RET
-main			CALL f
-			PUSH R6
+main			MOVE %D 7, R0
+			PUSH R0
 			POP R6
 			RET

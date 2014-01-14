@@ -1642,7 +1642,7 @@ class PostfiksIzraz(SlozenaNaredba):
         else:
             return 1
 
-    def asmIdn(self):
+    def asmIdnGlob(self):
         global trenutniRedIzlaza
         reg = nadiSlobodniRegistar()
 
@@ -1687,7 +1687,7 @@ class PostfiksIzraz(SlozenaNaredba):
         trenutniRedIzlaza += 1
 
     def provjeri(self,rekurzija):
-
+        global parametri
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
         if desnaStrana[0][0] == "<primarni_izraz>":
@@ -1703,8 +1703,8 @@ class PostfiksIzraz(SlozenaNaredba):
                         self.asmBroj(primarni_izraz.getBroj())
                     else:
                         self.asmBrojGlob(primarni_izraz.getBroj())
-                elif vrsta == 'IDN':
-                    self.asmIdn()
+                elif vrsta == 'IDN' and self.ime not in parametri:
+                    self.asmIdnGlob()
 
             return l_izraz
 
