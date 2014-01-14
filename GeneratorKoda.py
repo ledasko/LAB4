@@ -1225,32 +1225,27 @@ class BinIliIzraz(SlozenaNaredba):
     def getTip(self):
         return self.tip
 
-    def asmIli(self):
+    def asmIli(self,operator):
         global trenutniRedIzlaza
 
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("POP R"+str(reg1)+"\n")
+        reg1 = nadiSlobodniRegistar()
+        zauzetostRegistara[reg1] = 1
+        reg2 = nadiSlobodniRegistar()
+        zauzetostRegistara[reg2] = 1
+        reg3 = nadiSlobodniRegistar()
+        zauzetostRegistara[reg3] = 1
+
+        file.write("\t\t\tPOP R"+str(reg1)+"\n")
         trenutniRedIzlaza += 1
 
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("POP R"+str(reg2)+'\n')
+        file.write("\t\t\tPOP R"+str(reg2)+'\n')
         trenutniRedIzlaza += 1
 
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-
-        file.write("OR R"+str(reg2)+", R"+str(reg1)+", R"+str(reg3)+"\n")
+        file.write("\t\t\tOR ")
+        file.write("R"+str(reg2)+", R"+str(reg1)+", R"+str(reg3)+"\n")
         trenutniRedIzlaza += 1
 
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("PUSH R"+str(reg3)+'\n')
+        file.write("\t\t\tPUSH R"+str(reg3)+'\n')
         trenutniRedIzlaza += 1
 
         zauzetostRegistara[reg1] = 0
@@ -1297,7 +1292,7 @@ class BinXiliIzraz(SlozenaNaredba):
     def getTip(self):
         return self.tip
 
-    def asmXIli(self):
+    def asmXIli(self,operator):
         global trenutniRedIzlaza
 
         reg1 = nadiSlobodniRegistar()
@@ -1307,29 +1302,17 @@ class BinXiliIzraz(SlozenaNaredba):
         reg3 = nadiSlobodniRegistar()
         zauzetostRegistara[reg3] = 1
 
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("POP R"+str(reg1)+"\n")
+        file.write("\t\t\tPOP R"+str(reg1)+"\n")
         trenutniRedIzlaza += 1
 
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("POP R"+str(reg2)+'\n')
+        file.write("\t\t\tPOP R"+str(reg2)+'\n')
         trenutniRedIzlaza += 1
 
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-
-        file.write("XOR R"+str(reg2)+", R"+str(reg1)+", R"+str(reg3)+"\n")
+        file.write("\t\t\tXOR ")
+        file.write("R"+str(reg2)+", R"+str(reg1)+", R"+str(reg3)+"\n")
         trenutniRedIzlaza += 1
 
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("PUSH R"+str(reg3)+'\n')
+        file.write("\t\t\tPUSH R"+str(reg3)+'\n')
         trenutniRedIzlaza += 1
 
         zauzetostRegistara[reg1] = 0
@@ -1376,7 +1359,7 @@ class BinIIzraz(SlozenaNaredba):
     def getTip(self):
         return self.tip
 
-    def asmI(self):
+    def asmI(self,operator):
         global trenutniRedIzlaza
 
         reg1 = nadiSlobodniRegistar()
@@ -1386,29 +1369,17 @@ class BinIIzraz(SlozenaNaredba):
         reg3 = nadiSlobodniRegistar()
         zauzetostRegistara[reg3] = 1
 
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("POP R"+str(reg1)+"\n")
+        file.write("\t\t\tPOP R"+str(reg1)+"\n")
         trenutniRedIzlaza += 1
 
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("POP R"+str(reg2)+'\n')
+        file.write("\t\t\tPOP R"+str(reg2)+'\n')
         trenutniRedIzlaza += 1
 
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-
-        file.write("AND R"+str(reg2)+", R"+str(reg1)+", R"+str(reg3)+"\n")
+        file.write("\t\t\tAND ")
+        file.write("R"+str(reg2)+", R"+str(reg1)+", R"+str(reg3)+"\n")
         trenutniRedIzlaza += 1
 
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("PUSH R"+str(reg3)+'\n')
+        file.write("\t\t\tPUSH R"+str(reg3)+'\n')
         trenutniRedIzlaza += 1
 
         zauzetostRegistara[reg1] = 0
