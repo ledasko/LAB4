@@ -1642,6 +1642,41 @@ class PostfiksIzraz(SlozenaNaredba):
         else:
             return 1
 
+    def asmIdn(self):
+        global trenutniRedIzlaza
+        reg = nadiSlobodniRegistar()
+
+        file.write("\t\t\tLOAD R"+str(reg)+", ("+self.ime+")\n")
+        trenutniRedIzlaza += 1
+        file.write("\t\t\tPUSH R"+str(reg)+"\n")
+
+    def asmBroj(self,broj):
+        global trenutniRedIzlaza
+        global trenutniOperator
+        reg = nadiSlobodniRegistar()
+
+        if trenutniOperator == '+':
+            file.write("\t\t\tMOVE %D "+str(broj)+", R"+str(reg)+"\n")
+
+        else:
+            file.write("\t\t\tMOVE %D -"+str(broj)+", R"+str(reg)+"\n")
+            trenutniOperator = '+'
+
+        trenutniRedIzlaza += 1
+        file.write("\t\t\tPUSH R"+str(reg)+"\n")
+        trenutniRedIzlaza += 1
+
+    def asmBrojGlob(self,broj):
+        global trenutniRedIzlaza
+        global trenutniOperator
+        if trenutniOperator == '+':
+            file.write(" "+str(broj)+"\n")
+        else:
+            file.write(" -"+str(broj)+"\n")
+            trenutniOperator = '+'
+
+        trenutniRedIzlaza += 1
+
     def provjeri(self):
 
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
@@ -1651,6 +1686,12 @@ class PostfiksIzraz(SlozenaNaredba):
             l_izraz = primarni_izraz.provjeri()
             self.tip = primarni_izraz.getTip()
             self.ime = primarni_izraz.getIme()
+
+            if uFji:
+                self.asmBroj(primarni_izraz.getBroj())
+            else:
+                self.asmBrojGlob(primarni_izraz.getBroj())
+
             return l_izraz
 
         elif len(desnaStrana) == 2:
@@ -1765,12 +1806,16 @@ class PrimarniIzraz(SlozenaNaredba):
         self.pozicijaUprogramu = pozicijaUprogramu
         self.tip = ""
         self.ime = ""
+        self.broj = 0
 
     def getTip(self):
         return self.tip
 
     def getIme(self):
         return self.ime
+
+    def getBroj(self):
+        return self.broj
 
     def nadiBrojProdukcije(self,desnaStrana):
 
@@ -1793,40 +1838,7 @@ class PrimarniIzraz(SlozenaNaredba):
             elif tmp == 'NIZ_ZNAKOVA':
                 return 4
 
-    def asmIdn(self):
-        global trenutniRedIzlaza
-        reg = nadiSlobodniRegistar()
 
-        file.write("\t\t\tLOAD R"+str(reg)+", ("+self.ime+")\n")
-        trenutniRedIzlaza += 1
-        file.write("\t\t\tPUSH R"+str(reg)+"\n")
-
-    def asmBroj(self,broj):
-        global trenutniRedIzlaza
-        global trenutniOperator
-        reg = nadiSlobodniRegistar()
-
-        if trenutniOperator == '+':
-            file.write("\t\t\tMOVE %D "+str(broj)+", R"+str(reg)+"\n")
-
-        else:
-            file.write("\t\t\tMOVE %D -"+str(broj)+", R"+str(reg)+"\n")
-            trenutniOperator = '+'
-
-        trenutniRedIzlaza += 1
-        file.write("\t\t\tPUSH R"+str(reg)+"\n")
-        trenutniRedIzlaza += 1
-
-    def asmBrojGlob(self,broj):
-        global trenutniRedIzlaza
-        global trenutniOperator
-        if trenutniOperator == '+':
-            file.write(" "+str(broj)+"\n")
-        else:
-            file.write(" -"+str(broj)+"\n")
-            trenutniOperator = '+'
-
-        trenutniRedIzlaza += 1
 
     def provjeri(self):
         global jeliFja
@@ -1857,31 +1869,24 @@ class PrimarniIzraz(SlozenaNaredba):
             l_izraz = rezultat[0]
             self.tip = rezultat[1]
 
-            self.asmIdn()
-
             return l_izraz
 
 
         elif brojProdukcije == 2:
 
-            broj = izluciIDN(desnaStrana[0][0])
+            self.broj = izluciIDN(desnaStrana[0][0])
 
-            if len(broj) >= 2:
-                if broj[1] == 'x':
-                    broj = int(broj, 16)
+            if len(self.broj) >= 2:
+                if self.broj[1] == 'x':
+                    self.broj = int(self.broj, 16)
 
-            broj=int(broj)
+            self.broj=int(self.broj)
 
-            if broj < -2147483648 or broj > 2147483647:
+            if self.broj < -2147483648 or self.broj > 2147483647:
                 ispisGreske(desnaStrana)
 
 
             self.tip = "int"
-
-            if uFji:
-                self.asmBroj(broj)
-            else:
-                self.asmBrojGlob(broj)
 
             return 0
 
