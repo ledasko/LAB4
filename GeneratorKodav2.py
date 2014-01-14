@@ -1677,6 +1677,15 @@ class PostfiksIzraz(SlozenaNaredba):
 
         trenutniRedIzlaza += 1
 
+    def asmZoviFjuVoid(self,imeFje):
+        global trenutniRedIzlaza
+
+        file.write("\t\t\tCALL "+imeFje+"\n")
+        trenutniRedIzlaza += 1
+
+        file.write("\t\t\tPUSH R6\n")
+        trenutniRedIzlaza += 1
+
     def provjeri(self,rekurzija):
 
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
@@ -1757,6 +1766,9 @@ class PostfiksIzraz(SlozenaNaredba):
                 ispisGreske(desnaStrana)
 
             self.tip = tipFje
+
+            self.asmZoviFjuVoid(imeFje)
+
             return 0
 
         elif desnaStrana[2][0] == "<lista_argumenata>":
