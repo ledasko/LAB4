@@ -2,7 +2,9 @@
 			CALL main
 			HALT
 
-			LOAD R0, (x)
+ 15
+x		DW %D  16
+y		DW %D 			LOAD R0, (x)
 			PUSH R0
 			LOAD R0, (y)
 			PUSH R0

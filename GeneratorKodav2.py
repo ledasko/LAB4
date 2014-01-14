@@ -451,6 +451,7 @@ class ListaInitDeklaratora(Deklaracija):
             init_deklarator.provjeri(ntip)
 
 class InitDeklarator(SlozenaNaredba):
+
     def __init__(self,pozicijaUprogramu):
         self.pozicijaUprogramu = pozicijaUprogramu
 
@@ -467,21 +468,31 @@ class InitDeklarator(SlozenaNaredba):
         else:
             return False
 
+    def asmBrojGlob(self,ime):
+        global trenutniRedIzlaza
+
+        labele[trenutniRedIzlaza] = ime
+
+        file.write(ime+"\t\tDW %D ")
+        trenutniRedIzlaza += 1
+
     def provjeri(self,ntip):
+        global BROJ
+        global uFji
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
         izravni_deklarator = IzravniDeklarator(desnaStrana[0][1])
         tip = izravni_deklarator.provjeri(ntip)
+        ime = izravni_deklarator.getIdn()
 
         if len(desnaStrana) > 1:
 
             inicijalizator = Inicijalizator(desnaStrana[2][1])
             tipovi = inicijalizator.provjeri()
 
-
             dbrElem = izravni_deklarator.getBroj()
             ibrElem = inicijalizator.getbrElem()
-            
+
             #3. tocka 3 slucaja
             tIliconstT = self.jeliTiliconstT(tip)
             nizTIliconstT = self.jelinizTIliconstT(tip)
@@ -503,12 +514,14 @@ class InitDeklarator(SlozenaNaredba):
             else:
                 ispisGreske(desnaStrana)
 
-
         else:
             if "const" in tip:
                 ispisGreske(desnaStrana)
             elif "niz(const" in tip:
                 ispisGreske(desnaStrana)
+
+        if tip == 'int' and not uFji:
+            self.asmBrojGlob(ime)
 
 class ListaIzrazaPridruzivanja(SlozenaNaredba):
 
@@ -637,13 +650,16 @@ class Inicijalizator(Deklaracija):
 
 class IzravniDeklarator(SlozenaNaredba):
 
-
     def __init__(self,pozicijaUprogramu):
         self.pozicijaUprogramu = pozicijaUprogramu
         self.broj=0
+        self.idn = ""
 
     def getBroj(self):
         return self.broj
+
+    def getIdn(self):
+        return self.idn
 
     def nadiBrojProdukcjie(self,desnaStrana):
 
@@ -663,19 +679,19 @@ class IzravniDeklarator(SlozenaNaredba):
 
         brojProdukcije = self.nadiBrojProdukcjie(desnaStrana)
 
-        idn = izluciIDN(desnaStrana[0][0])
+        self.idn = izluciIDN(desnaStrana[0][0])
 
         if brojProdukcije == 1:
             #IDN je sam
             if ntip == 'void':
                 ispisGreske(desnaStrana)
 
-            deklarirano = jeliDeklariranoLokalno(idn)
+            deklarirano = jeliDeklariranoLokalno(self.idn)
 
             if deklarirano:
                 ispisGreske(desnaStrana)
 
-            zabiljeziIDNkaol_izraz(idn,ntip)
+            zabiljeziIDNkaol_izraz(self.idn,ntip)
 
             return ntip
 
@@ -683,7 +699,7 @@ class IzravniDeklarator(SlozenaNaredba):
             if ntip == 'void':
                 ispisGreske(desnaStrana)
 
-            if jeliDeklariranoLokalno(idn):
+            if jeliDeklariranoLokalno(self.idn):
                 ispisGreske(desnaStrana)
 
             self.broj = izluciIDN(desnaStrana[2][0])
@@ -695,12 +711,12 @@ class IzravniDeklarator(SlozenaNaredba):
 
             tip = "niz("+ntip+")"
 
-            zabiljeziIDN(idn,tip)
+            zabiljeziIDN(self.idn,tip)
 
             return tip
 
         elif brojProdukcije == 3:
-            zabiljeziDeklaracijuFunkcije(idn,ntip,"void")
+            zabiljeziDeklaracijuFunkcije(self.idn,ntip,"void")
 
             #nesto treba vratit
             return ntip
@@ -710,7 +726,7 @@ class IzravniDeklarator(SlozenaNaredba):
             #listaParametara je oblika lista listi koje imaju clanove [tip,ime]
             listaParametara = lista_parametara.provjeri()
 
-            zabiljeziDeklaracijuFunkcije(idn,ntip,listaParametara)
+            zabiljeziDeklaracijuFunkcije(self.idn,ntip,listaParametara)
 
             #nesto treba vratit
             return ntip
