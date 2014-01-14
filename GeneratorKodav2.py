@@ -1677,7 +1677,7 @@ class PostfiksIzraz(SlozenaNaredba):
 
         trenutniRedIzlaza += 1
 
-    def provjeri(self):
+    def provjeri(self,rekurzija):
 
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
@@ -1688,20 +1688,20 @@ class PostfiksIzraz(SlozenaNaredba):
             self.ime = primarni_izraz.getIme()
             vrsta = primarni_izraz.getVrsta()
 
-            if vrsta == 'BROJ':
-                if uFji:
-                    self.asmBroj(primarni_izraz.getBroj())
-                else:
-                    self.asmBrojGlob(primarni_izraz.getBroj())
-            elif vrsta == 'IDN':
-                self.asmIdn()
-
+            if not rekurzija:
+                if vrsta == 'BROJ':
+                    if uFji:
+                        self.asmBroj(primarni_izraz.getBroj())
+                    else:
+                        self.asmBrojGlob(primarni_izraz.getBroj())
+                elif vrsta == 'IDN':
+                    self.asmIdn()
 
             return l_izraz
 
         elif len(desnaStrana) == 2:
             postfiks_izraz = PostfiksIzraz(desnaStrana[0][1])
-            l_izraz = postfiks_izraz.provjeri()
+            l_izraz = postfiks_izraz.provjeri(1)
             self.tip = postfiks_izraz.getTip()
 
             if l_izraz != 1:
@@ -1716,7 +1716,7 @@ class PostfiksIzraz(SlozenaNaredba):
 
         elif desnaStrana[2][0] == "<izraz>":
             postfiks_izraz = PostfiksIzraz(desnaStrana[0][1])
-            l_izraz = postfiks_izraz.provjeri()
+            postfiks_izraz.provjeri(1)
             self.tip = postfiks_izraz.getTip()
 
             provjera = provjeriNizX(self.tip)
@@ -1738,7 +1738,7 @@ class PostfiksIzraz(SlozenaNaredba):
 
         elif len(desnaStrana) == 3:
             postfiks_izraz = PostfiksIzraz(desnaStrana[0][1])
-            l_izraz = postfiks_izraz.provjeri()
+            postfiks_izraz.provjeri(1)
             self.tip = postfiks_izraz.getTip()
 
             imeFje = postfiks_izraz.getIme()
@@ -1761,7 +1761,7 @@ class PostfiksIzraz(SlozenaNaredba):
 
         elif desnaStrana[2][0] == "<lista_argumenata>":
             postfiks_izraz = PostfiksIzraz(desnaStrana[0][1])
-            l_izraz = postfiks_izraz.provjeri()
+            postfiks_izraz.provjeri(1)
             self.tip = postfiks_izraz.getTip()
 
             imeFje = postfiks_izraz.getIme()

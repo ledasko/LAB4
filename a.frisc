@@ -2,8 +2,11 @@
 			CALL main
 			HALT
 
-x		DW %D  72
-main			LOAD R0, (x)
+f			MOVE %D 123, R0
+			PUSH R0
+			POP R6
+			RET
+main			LOAD R0, (f)
 			PUSH R0
 			POP R6
 			RET
