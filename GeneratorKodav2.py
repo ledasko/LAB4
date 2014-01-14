@@ -736,6 +736,17 @@ class ListaParametara(SlozenaNaredba):
         self.pozicijaUprogramu = pozicijaUprogramu
         self.tipovi_imena = []
 
+    def asmJedanParam(self):
+        global trenutniRedIzlaza
+
+        reg = nadiSlobodniRegistar()
+
+        file.write("\t\t\tLOAD R"+str(reg)+", (R7+4)\n")
+        trenutniRedIzlaza += 1
+
+        file.write("\t\t\tPUSH R"+str(reg)+"\n")
+        trenutniRedIzlaza += 1
+
     def provjeri(self):
         global parametri
         parametri = []
@@ -754,6 +765,8 @@ class ListaParametara(SlozenaNaredba):
             parametri.append(ime)
 
             self.tipovi_imena.append(tmp)
+
+            self.asmJedanParam()
 
             return self.tipovi_imena
 
@@ -1693,6 +1706,21 @@ class PostfiksIzraz(SlozenaNaredba):
         file.write("\t\t\tPUSH R6\n")
         trenutniRedIzlaza += 1
 
+    def asmZoviFjuParam(self,imeFje):
+        global trenutniRedIzlaza
+        global parametri
+
+        file.write("\t\t\tCALL "+imeFje+"\n")
+        trenutniRedIzlaza += 1
+
+        pomak = len(parametri)*4
+
+        file.write("\t\t\tADD R7,"+str(pomak)+",R7\n")
+        trenutniRedIzlaza += 1
+
+        file.write("\t\t\tPUSH R6\n")
+        trenutniRedIzlaza += 1
+
     def provjeri(self,rekurzija):
         global parametri
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
@@ -1820,6 +1848,7 @@ class PostfiksIzraz(SlozenaNaredba):
                     ispisGreske(desnaStrana)
                 i += 1
 
+            self.asmZoviFjuParam(imeFje)
 
             self.tip = tipFje
             return 0
