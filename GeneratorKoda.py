@@ -479,13 +479,16 @@ class InitDeklarator(SlozenaNaredba):
         global trenutniRedIzlaza
         broj = str(broj)
         lbl = "G_"+ime
+
         labele[trenutniRedIzlaza] = lbl
         vrijednostLabele[lbl] = broj
+
         file.write(lbl+"\t\tDW %D "+broj+"\n")
         trenutniRedIzlaza += 1
 
     def provjeri(self,ntip):
         global BROJ
+        global uFji
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
         izravni_deklarator = IzravniDeklarator(desnaStrana[0][1])
@@ -527,7 +530,7 @@ class InitDeklarator(SlozenaNaredba):
             elif "niz(const" in tip:
                 ispisGreske(desnaStrana)
 
-        if tip == 'int':
+        if tip == 'int' and not uFji:
             self.asmBroj(ime,BROJ)
 
 class ListaIzrazaPridruzivanja(SlozenaNaredba):
@@ -656,7 +659,6 @@ class Inicijalizator(Deklaracija):
             return tipovi
 
 class IzravniDeklarator(SlozenaNaredba):
-
 
     def __init__(self,pozicijaUprogramu):
         self.pozicijaUprogramu = pozicijaUprogramu
@@ -997,10 +999,11 @@ class NaredbaSkoka(Naredba):
     def asmreturn(self):
         global trenutniRedIzlaza
         global IME
+        global lokalnaVarijabla
 
         lbl = "G_"+IME
         for red in labele:
-            if labele[red] == lbl:
+            if labele[red] == lbl and not lokalnaVarijabla:
                 vrijednost = vrijednostLabele[lbl]
                 reg = nadiSlobodniRegistar()
                 lbl1 = imaLiLabele(trenutniRedIzlaza)
@@ -1941,6 +1944,9 @@ class PrimarniIzraz(SlozenaNaredba):
     def asmBroj(self,broj):
         global trenutniRedIzlaza
         global trenutniOperator
+        global lokalnaVarijabla
+
+        lokalnaVarijabla = 1
 
         broj = str(broj)
         trenRegistar = nadiSlobodniRegistar()
@@ -1953,10 +1959,6 @@ class PrimarniIzraz(SlozenaNaredba):
             operator = ''
         else:
             operator  = '-'
-
-        #oznaci trenutni registar kao zauzet i daj mu vrijednost
-        #zauzetostRegistara[trenRegistar] = 1
-        #vrijednostRegistara[trenRegistar] = operator+broj
 
         trenRegistar = str(trenRegistar)
         lbl = imaLiLabele(trenutniRedIzlaza)
@@ -2265,6 +2267,9 @@ def parametriGeneratora():
     global trenutniOperator
     global uFji
     global vrijednostLabele
+    global lokalnaVarijabla
+
+    lokalnaVarijabla = 0
 
     trenutniOperator = '+'
     uFji = 0
