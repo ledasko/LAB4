@@ -946,6 +946,11 @@ class NaredbaSkoka(Naredba):
         elif kljucnaRijec == 'KR_RETURN':
             return 3
 
+    def asmReturn(self):
+        global trenutniRedIzlaza
+        file.write("\t\t\tRET\n")
+        trenutniRedIzlaza += 1
+
     def provjeri(self):
         global imeTrenutneFunkcije
 
@@ -965,6 +970,8 @@ class NaredbaSkoka(Naredba):
             tipFje = listaTablica[mjestoDeklaracije][imeTrenutneFunkcije][1]
             if tipFje != "void":
                 ispisGreske(desnaStrana)
+
+            self.asmReturn()
         elif brojProdukcije == 4:
             izraz = Izraz(desnaStrana[1][1])
             izraz.provjeri()
@@ -979,6 +986,7 @@ class NaredbaSkoka(Naredba):
 
             if not implicitno:
                 ispisGreske(desnaStrana)
+            self.asmReturn()
 
 class Izraz(SlozenaNaredba):
 

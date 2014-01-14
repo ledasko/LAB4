@@ -10,4 +10,5 @@
 			POP R1
 			ADD R1, R0, R2
 			PUSH R2
-POP R6
+			POP R6
+			RET
