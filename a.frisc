@@ -3,7 +3,7 @@
 			HALT
 
 x		DW %D  72
-main			MOVE %D 0, R0
+main			LOAD R0, (x)
 			PUSH R0
 			POP R6
 			RET

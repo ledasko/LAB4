@@ -1686,11 +1686,15 @@ class PostfiksIzraz(SlozenaNaredba):
             l_izraz = primarni_izraz.provjeri()
             self.tip = primarni_izraz.getTip()
             self.ime = primarni_izraz.getIme()
+            vrsta = primarni_izraz.getVrsta()
 
-            if uFji:
-                self.asmBroj(primarni_izraz.getBroj())
-            else:
-                self.asmBrojGlob(primarni_izraz.getBroj())
+            if vrsta == 'BROJ':
+                if uFji:
+                    self.asmBroj(primarni_izraz.getBroj())
+                else:
+                    self.asmBrojGlob(primarni_izraz.getBroj())
+            elif vrsta == 'IDN':
+                self.asmIdn()
 
 
             return l_izraz
