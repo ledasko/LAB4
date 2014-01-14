@@ -477,7 +477,6 @@ class InitDeklarator(SlozenaNaredba):
         trenutniRedIzlaza += 1
 
     def provjeri(self,ntip):
-        global BROJ
         global uFji
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
@@ -486,6 +485,9 @@ class InitDeklarator(SlozenaNaredba):
         ime = izravni_deklarator.getIdn()
 
         if len(desnaStrana) > 1:
+
+            if tip == 'int' and not uFji:
+                self.asmBrojGlob(ime)
 
             inicijalizator = Inicijalizator(desnaStrana[2][1])
             tipovi = inicijalizator.provjeri()
@@ -519,9 +521,6 @@ class InitDeklarator(SlozenaNaredba):
                 ispisGreske(desnaStrana)
             elif "niz(const" in tip:
                 ispisGreske(desnaStrana)
-
-        if tip == 'int' and not uFji:
-            self.asmBrojGlob(ime)
 
 class ListaIzrazaPridruzivanja(SlozenaNaredba):
 
