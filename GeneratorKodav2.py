@@ -1634,7 +1634,11 @@ class PrimarniIzraz(SlozenaNaredba):
                 return 4
 
     def asmIdn(self):
+        global trenutniRedIzlaza
+        reg = nadiSlobodniRegistar()
 
+        file.write("\t\t\tLOAD R"+str(reg)+", ("+self.ime+")\n")
+        trenutniRedIzlaza += 1
 
     def provjeri(self):
         global jeliFja

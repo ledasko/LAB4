@@ -2,3 +2,5 @@
 			CALL main
 			HALT
 
+			LOAD R0, (x)
+			LOAD R0, (y)
