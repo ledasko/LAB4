@@ -10,13 +10,6 @@ def nadiSlobodniRegistar():
             break
     return trenRegistar
 
-def imaLiLabele(redak):
-    global labele
-    if redak in labele:
-        return 1
-    else:
-        return 0
-
 def ispisGreske(desnaStrana):
     pozicijaPrviDesni = desnaStrana[0][1]
     pozicijaLijevi = pozicijaPrviDesni - 1
@@ -458,7 +451,6 @@ class ListaInitDeklaratora(Deklaracija):
             init_deklarator.provjeri(ntip)
 
 class InitDeklarator(SlozenaNaredba):
-
     def __init__(self,pozicijaUprogramu):
         self.pozicijaUprogramu = pozicijaUprogramu
 
@@ -475,30 +467,17 @@ class InitDeklarator(SlozenaNaredba):
         else:
             return False
 
-    def asmBroj(self,ime,broj):
-        global trenutniRedIzlaza
-        broj = str(broj)
-        lbl = "G_"+ime
-
-        labele[trenutniRedIzlaza] = lbl
-        vrijednostLabele[lbl] = broj
-
-        file.write(lbl+"\t\tDW %D "+broj+"\n")
-        trenutniRedIzlaza += 1
-
     def provjeri(self,ntip):
-        global BROJ
-        global uFji
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
         izravni_deklarator = IzravniDeklarator(desnaStrana[0][1])
         tip = izravni_deklarator.provjeri(ntip)
-        ime = izravni_deklarator.getIdn()
 
         if len(desnaStrana) > 1:
 
             inicijalizator = Inicijalizator(desnaStrana[2][1])
             tipovi = inicijalizator.provjeri()
+
 
             dbrElem = izravni_deklarator.getBroj()
             ibrElem = inicijalizator.getbrElem()
@@ -524,14 +503,12 @@ class InitDeklarator(SlozenaNaredba):
             else:
                 ispisGreske(desnaStrana)
 
+
         else:
             if "const" in tip:
                 ispisGreske(desnaStrana)
             elif "niz(const" in tip:
                 ispisGreske(desnaStrana)
-
-        if tip == 'int' and not uFji:
-            self.asmBroj(ime,BROJ)
 
 class ListaIzrazaPridruzivanja(SlozenaNaredba):
 
@@ -660,16 +637,13 @@ class Inicijalizator(Deklaracija):
 
 class IzravniDeklarator(SlozenaNaredba):
 
+
     def __init__(self,pozicijaUprogramu):
         self.pozicijaUprogramu = pozicijaUprogramu
         self.broj=0
-        self.idn = ""
 
     def getBroj(self):
         return self.broj
-
-    def getIdn(self):
-        return self.idn
 
     def nadiBrojProdukcjie(self,desnaStrana):
 
@@ -689,19 +663,19 @@ class IzravniDeklarator(SlozenaNaredba):
 
         brojProdukcije = self.nadiBrojProdukcjie(desnaStrana)
 
-        self.idn = izluciIDN(desnaStrana[0][0])
+        idn = izluciIDN(desnaStrana[0][0])
 
         if brojProdukcije == 1:
             #IDN je sam
             if ntip == 'void':
                 ispisGreske(desnaStrana)
 
-            deklarirano = jeliDeklariranoLokalno(self.idn)
+            deklarirano = jeliDeklariranoLokalno(idn)
 
             if deklarirano:
                 ispisGreske(desnaStrana)
 
-            zabiljeziIDNkaol_izraz(self.idn,ntip)
+            zabiljeziIDNkaol_izraz(idn,ntip)
 
             return ntip
 
@@ -709,7 +683,7 @@ class IzravniDeklarator(SlozenaNaredba):
             if ntip == 'void':
                 ispisGreske(desnaStrana)
 
-            if jeliDeklariranoLokalno(self.idn):
+            if jeliDeklariranoLokalno(idn):
                 ispisGreske(desnaStrana)
 
             self.broj = izluciIDN(desnaStrana[2][0])
@@ -721,12 +695,12 @@ class IzravniDeklarator(SlozenaNaredba):
 
             tip = "niz("+ntip+")"
 
-            zabiljeziIDN(self.idn,tip)
+            zabiljeziIDN(idn,tip)
 
             return tip
 
         elif brojProdukcije == 3:
-            zabiljeziDeklaracijuFunkcije(self.idn,ntip,"void")
+            zabiljeziDeklaracijuFunkcije(idn,ntip,"void")
 
             #nesto treba vratit
             return ntip
@@ -736,7 +710,7 @@ class IzravniDeklarator(SlozenaNaredba):
             #listaParametara je oblika lista listi koje imaju clanove [tip,ime]
             listaParametara = lista_parametara.provjeri()
 
-            zabiljeziDeklaracijuFunkcije(self.idn,ntip,listaParametara)
+            zabiljeziDeklaracijuFunkcije(idn,ntip,listaParametara)
 
             #nesto treba vratit
             return ntip
@@ -746,26 +720,6 @@ class ListaParametara(SlozenaNaredba):
     def __init__(self,pozicijaUprogramu):
         self.pozicijaUprogramu = pozicijaUprogramu
         self.tipovi_imena = []
-
-    def asmJedanParam(self):
-        global trenutniRedIzlaza
-
-        reg = nadiSlobodniRegistar()
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("LOAD R"+str(reg)+", (R7+4)\n")
-        trenutniRedIzlaza += 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("PUSH R"+str(reg)+"\n")
-        trenutniRedIzlaza += 1
-
-    def asmViseParam(self):
-        pass
 
     def provjeri(self):
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
@@ -781,8 +735,6 @@ class ListaParametara(SlozenaNaredba):
             tmp.append(ime)
 
             self.tipovi_imena.append(tmp)
-
-            self.asmJedanParam()
 
             return self.tipovi_imena
 
@@ -803,8 +755,6 @@ class ListaParametara(SlozenaNaredba):
                 ispisGreske(desnaStrana)
 
             self.tipovi_imena.append(tmp)
-
-            self.asmViseParam()
 
             return self.tipovi_imena
 
@@ -996,49 +946,8 @@ class NaredbaSkoka(Naredba):
         elif kljucnaRijec == 'KR_RETURN':
             return 3
 
-    def asmreturn(self):
-        global trenutniRedIzlaza
-        global IME
-        global lokalnaVarijabla
-
-        lbl = "G_"+IME
-        for red in labele:
-            if labele[red] == lbl and not lokalnaVarijabla:
-                vrijednost = vrijednostLabele[lbl]
-                reg = nadiSlobodniRegistar()
-                lbl1 = imaLiLabele(trenutniRedIzlaza)
-                if not lbl1:
-                    file.write("\t\t\t")
-                file.write("LOAD R"+str(reg)+", ("+lbl+")\n")
-                trenutniRedIzlaza += 1
-
-                lbl1 = imaLiLabele(trenutniRedIzlaza)
-                if not lbl1:
-                    file.write("\t\t\t")
-                file.write("PUSH R"+str(reg)+"\n")
-                trenutniRedIzlaza += 1
-                break
-
-
-        zauzetostRegistara[6] = 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("POP R6\n")
-        trenutniRedIzlaza += 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("RET\n")
-        trenutniRedIzlaza += 1
-
-        zauzetostRegistara[6] = 0
-
     def provjeri(self):
         global imeTrenutneFunkcije
-        global IME
 
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
         brojProdukcije = self.nadiBrojProdukcije(desnaStrana)
@@ -1070,8 +979,6 @@ class NaredbaSkoka(Naredba):
 
             if not implicitno:
                 ispisGreske(desnaStrana)
-
-            self.asmreturn()
 
 class Izraz(SlozenaNaredba):
 
@@ -1225,38 +1132,6 @@ class BinIliIzraz(SlozenaNaredba):
     def getTip(self):
         return self.tip
 
-    def asmIli(self):
-        global trenutniRedIzlaza
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("POP R"+str(reg1)+"\n")
-        trenutniRedIzlaza += 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("POP R"+str(reg2)+'\n')
-        trenutniRedIzlaza += 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-
-        file.write("OR R"+str(reg2)+", R"+str(reg1)+", R"+str(reg3)+"\n")
-        trenutniRedIzlaza += 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("PUSH R"+str(reg3)+'\n')
-        trenutniRedIzlaza += 1
-
-        zauzetostRegistara[reg1] = 0
-        zauzetostRegistara[reg2] = 0
-        zauzetostRegistara[reg3] = 0
-
     def provjeri(self):
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
@@ -1283,9 +1158,6 @@ class BinIliIzraz(SlozenaNaredba):
                 ispisGreske(desnaStrana)
 
             self.tip = "int"
-
-            self.asmIli()
-
             return 0
 
 class BinXiliIzraz(SlozenaNaredba):
@@ -1296,45 +1168,6 @@ class BinXiliIzraz(SlozenaNaredba):
 
     def getTip(self):
         return self.tip
-
-    def asmXIli(self):
-        global trenutniRedIzlaza
-
-        reg1 = nadiSlobodniRegistar()
-        zauzetostRegistara[reg1] = 1
-        reg2 = nadiSlobodniRegistar()
-        zauzetostRegistara[reg2] = 1
-        reg3 = nadiSlobodniRegistar()
-        zauzetostRegistara[reg3] = 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("POP R"+str(reg1)+"\n")
-        trenutniRedIzlaza += 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("POP R"+str(reg2)+'\n')
-        trenutniRedIzlaza += 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-
-        file.write("XOR R"+str(reg2)+", R"+str(reg1)+", R"+str(reg3)+"\n")
-        trenutniRedIzlaza += 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("PUSH R"+str(reg3)+'\n')
-        trenutniRedIzlaza += 1
-
-        zauzetostRegistara[reg1] = 0
-        zauzetostRegistara[reg2] = 0
-        zauzetostRegistara[reg3] = 0
 
     def provjeri(self):
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
@@ -1362,9 +1195,6 @@ class BinXiliIzraz(SlozenaNaredba):
                 ispisGreske(desnaStrana)
 
             self.tip = "int"
-
-            self.asmXIli()
-
             return 0
 
 class BinIIzraz(SlozenaNaredba):
@@ -1375,45 +1205,6 @@ class BinIIzraz(SlozenaNaredba):
 
     def getTip(self):
         return self.tip
-
-    def asmI(self):
-        global trenutniRedIzlaza
-
-        reg1 = nadiSlobodniRegistar()
-        zauzetostRegistara[reg1] = 1
-        reg2 = nadiSlobodniRegistar()
-        zauzetostRegistara[reg2] = 1
-        reg3 = nadiSlobodniRegistar()
-        zauzetostRegistara[reg3] = 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("POP R"+str(reg1)+"\n")
-        trenutniRedIzlaza += 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("POP R"+str(reg2)+'\n')
-        trenutniRedIzlaza += 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-
-        file.write("AND R"+str(reg2)+", R"+str(reg1)+", R"+str(reg3)+"\n")
-        trenutniRedIzlaza += 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("PUSH R"+str(reg3)+'\n')
-        trenutniRedIzlaza += 1
-
-        zauzetostRegistara[reg1] = 0
-        zauzetostRegistara[reg2] = 0
-        zauzetostRegistara[reg3] = 0
 
     def provjeri(self):
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
@@ -1441,9 +1232,6 @@ class BinIIzraz(SlozenaNaredba):
                 ispisGreske(desnaStrana)
 
             self.tip = "int"
-
-            self.asmI()
-
             return 0
 
 class JednakosniIzraz(SlozenaNaredba):
@@ -1530,49 +1318,6 @@ class AditivniIzraz(SlozenaNaredba):
     def getTip(self):
         return self.tip
 
-    def asmzbroji(self,operator):
-        global trenutniRedIzlaza
-
-        reg1 = nadiSlobodniRegistar()
-        zauzetostRegistara[reg1] = 1
-        reg2 = nadiSlobodniRegistar()
-        zauzetostRegistara[reg2] = 1
-        reg3 = nadiSlobodniRegistar()
-        zauzetostRegistara[reg3] = 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("POP R"+str(reg1)+"\n")
-        trenutniRedIzlaza += 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("POP R"+str(reg2)+'\n')
-        trenutniRedIzlaza += 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-
-        if operator == '+':
-            file.write("ADD ")
-        else:
-            file.write("SUB ")
-        file.write("R"+str(reg2)+", R"+str(reg1)+", R"+str(reg3)+"\n")
-        trenutniRedIzlaza += 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("PUSH R"+str(reg3)+'\n')
-        trenutniRedIzlaza += 1
-
-        zauzetostRegistara[reg1] = 0
-        zauzetostRegistara[reg2] = 0
-        zauzetostRegistara[reg3] = 0
-
     def provjeri(self):
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
@@ -1597,11 +1342,6 @@ class AditivniIzraz(SlozenaNaredba):
                 ispisGreske(desnaStrana)
 
             self.tip = "int"
-
-            op = izluciIDN(desnaStrana[1][0])
-
-            self.asmzbroji(op)
-
             return 0
 
 class MultiplikativniIzraz(SlozenaNaredba):
@@ -1703,9 +1443,6 @@ class UnarniIzraz(SlozenaNaredba):
             self.tip = "int"
             return 0
         else:
-            unarni_operator = UnarniOperator(desnaStrana[0][1])
-            unarni_operator.provjeri()
-
             cast_izraz = CastIzraz(desnaStrana[1][1])
             l_izraz = cast_izraz.provjeri()
             self.tip = cast_izraz.getTip()
@@ -1722,10 +1459,9 @@ class UnarniOperator(SlozenaNaredba):
         self.pozicijaUprogramu = pozicijaUprogramu
 
     def provjeri(self):
-        global trenutniOperator
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
-        trenutniOperator = izluciIDN(desnaStrana[0][0])
+        return 0
 
 class PostfiksIzraz(SlozenaNaredba):
 
@@ -1745,44 +1481,6 @@ class PostfiksIzraz(SlozenaNaredba):
             return 0
         else:
             return 1
-
-    def asmVoid(self,imeFje):
-        global trenutniRedIzlaza
-        global vrijednostRegistara
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("CALL "+imeFje+"\n")
-        trenutniRedIzlaza += 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("PUSH R6\n")
-        trenutniRedIzlaza += 1
-
-    def asmParametri(self,imeFje):
-        global trenutniRedIzlaza
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("CALL "+imeFje+"\n")
-        trenutniRedIzlaza += 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("ADD R7, 4, R7\n")
-        trenutniRedIzlaza += 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("PUSH R6\n")
-        trenutniRedIzlaza += 1
-
 
     def provjeri(self):
 
@@ -1853,9 +1551,6 @@ class PostfiksIzraz(SlozenaNaredba):
                 ispisGreske(desnaStrana)
 
             self.tip = tipFje
-
-            self.asmVoid(imeFje)
-
             return 0
 
         elif desnaStrana[2][0] == "<lista_argumenata>":
@@ -1902,9 +1597,6 @@ class PostfiksIzraz(SlozenaNaredba):
 
 
             self.tip = tipFje
-
-            self.asmParametri(imeFje)
-
             return 0
 
 class PrimarniIzraz(SlozenaNaredba):
@@ -1941,47 +1633,8 @@ class PrimarniIzraz(SlozenaNaredba):
             elif tmp == 'NIZ_ZNAKOVA':
                 return 4
 
-    def asmBroj(self,broj):
-        global trenutniRedIzlaza
-        global trenutniOperator
-        global lokalnaVarijabla
-
-        lokalnaVarijabla = 1
-
-        broj = str(broj)
-        trenRegistar = nadiSlobodniRegistar()
-
-        if trenRegistar < 0:
-            print "Nema slobodnih registara"
-            exit(-1)
-
-        if trenutniOperator == '+':
-            operator = ''
-        else:
-            operator  = '-'
-
-        trenRegistar = str(trenRegistar)
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("MOVE %D "+operator+broj+", R"+trenRegistar+"\n")
-        trenutniRedIzlaza += 1
-
-        lbl = imaLiLabele(trenutniRedIzlaza)
-        if not lbl:
-            file.write("\t\t\t")
-        file.write("PUSH R"+trenRegistar+"\n")
-        trenutniRedIzlaza += 1
-
-    def asmZnak(self,znak):
-        print znak
-
     def provjeri(self):
         global jeliFja
-        global BROJ
-        global IME
-
-        IME = ""
 
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
@@ -1991,7 +1644,6 @@ class PrimarniIzraz(SlozenaNaredba):
             idn = izluciIDN(desnaStrana[0][0])
 
             self.ime = idn
-            IME = idn
 
             rezultat = jeliDeklariranoIgdje(idn)
 
@@ -2012,6 +1664,7 @@ class PrimarniIzraz(SlozenaNaredba):
 
             return l_izraz
 
+
         elif brojProdukcije == 2:
 
             broj = izluciIDN(desnaStrana[0][0])
@@ -2025,13 +1678,8 @@ class PrimarniIzraz(SlozenaNaredba):
             if broj < -2147483648 or broj > 2147483647:
                 ispisGreske(desnaStrana)
 
+
             self.tip = "int"
-
-            if uFji:
-                self.asmBroj(broj)
-            else:
-                BROJ = broj
-
             return 0
 
         elif brojProdukcije == 3:
@@ -2051,8 +1699,6 @@ class PrimarniIzraz(SlozenaNaredba):
 
             else:
                 ispisGreske(desnaStrana)
-
-            self.asmZnak(znak)
 
         elif brojProdukcije == 4:
             niz_znakova=izluciIDN(desnaStrana[0][0])
@@ -2123,21 +1769,9 @@ class DefinicijaFunkcije(SlozenaNaredba):
     def __init__(self,pozicijaUprogramu):
         self.pozicijaUprogramu = pozicijaUprogramu
 
-    def asmLabela(self,lbl):
-        global labele
-        global trenutniRedIzlaza
-        if lbl == "main":
-            file.write("F_MAIN\t\t")
-        else:
-            file.write(lbl+"\t\t")
-
-        labele[trenutniRedIzlaza] = lbl
-
     def provjeri(self):
-        global uFji
-        global imeTrenutneFunkcije
 
-        uFji = 1
+        global imeTrenutneFunkcije
 
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
@@ -2163,8 +1797,6 @@ class DefinicijaFunkcije(SlozenaNaredba):
             if definirana:
                 ispisGreske(desnaStrana)
 
-        self.asmLabela(idn)
-
         #DO OVE TOCKE ISTO JE ZA OBE PRODUKCIJE
 
         if desnaStrana[3][0] == "<lista_parametara>":
@@ -2183,8 +1815,6 @@ class DefinicijaFunkcije(SlozenaNaredba):
 
             slozena_naredba = SlozenaNaredba(desnaStrana[5][1])
             slozena_naredba.provjeri()
-
-        uFji = 0
 
 class ImeTipa(SlozenaNaredba):
 
@@ -2255,7 +1885,7 @@ def otvoriFileZaIzlaz():
     global file
 
     file = open("a.frisc","w")
-    inicijalniZapis = "\t\t\tMOVE 40000, R7\n\t\t\tCALL F_MAIN\n\t\t\tHALT\n\n"
+    inicijalniZapis = "\t\t\tMOVE 40000, R7\n\t\t\tCALL main\n\t\t\tHALT\n\n"
     file.write(inicijalniZapis)
     trenutniRedIzlaza = 5
 
@@ -2265,9 +1895,7 @@ def parametriGeneratora():
     global vrijednostLabele
     global zauzetostRegistara
     global vrijednostRegistara
-    global trenutniOperator
 
-    trenutniOperator = '+'
     trenutniRedIzlaza = 0
 
     #key je redak, a value je labela
@@ -2294,7 +1922,6 @@ def main ():
     global imeTrenutneFunkcije
     global uPetlji
     global jeliFja
-
 
     jeliFja = 0
 
