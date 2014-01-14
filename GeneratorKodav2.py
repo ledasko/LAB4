@@ -1895,8 +1895,10 @@ def parametriGeneratora():
     global vrijednostLabele
     global zauzetostRegistara
     global vrijednostRegistara
+    global uFji
 
     trenutniRedIzlaza = 0
+    uFji = 0
 
     #key je redak, a value je labela
     labele = {}
