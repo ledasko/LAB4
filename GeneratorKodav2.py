@@ -1692,6 +1692,7 @@ class PostfiksIzraz(SlozenaNaredba):
             else:
                 self.asmBrojGlob(primarni_izraz.getBroj())
 
+
             return l_izraz
 
         elif len(desnaStrana) == 2:
@@ -1807,6 +1808,7 @@ class PrimarniIzraz(SlozenaNaredba):
         self.tip = ""
         self.ime = ""
         self.broj = 0
+        self.vrsta = ""
 
     def getTip(self):
         return self.tip
@@ -1816,6 +1818,9 @@ class PrimarniIzraz(SlozenaNaredba):
 
     def getBroj(self):
         return self.broj
+
+    def getVrsta(self):
+        return self.vrsta
 
     def nadiBrojProdukcije(self,desnaStrana):
 
@@ -1829,6 +1834,7 @@ class PrimarniIzraz(SlozenaNaredba):
                     del tmp [i:]
                     break
             tmp = ''.join(tmp)
+            self.vrsta = tmp
             if tmp == 'IDN':
                 return 1
             elif tmp == 'BROJ':
@@ -1884,7 +1890,6 @@ class PrimarniIzraz(SlozenaNaredba):
 
             if self.broj < -2147483648 or self.broj > 2147483647:
                 ispisGreske(desnaStrana)
-
 
             self.tip = "int"
 
