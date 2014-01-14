@@ -1635,7 +1635,7 @@ class PrimarniIzraz(SlozenaNaredba):
 
     def provjeri(self):
         global jeliFja
-
+        global uFji
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
         brojProdukcije = self.nadiBrojProdukcije(desnaStrana)
