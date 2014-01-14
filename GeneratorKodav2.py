@@ -1691,6 +1691,37 @@ class PrimarniIzraz(SlozenaNaredba):
         trenutniRedIzlaza += 1
         file.write("\t\t\tPUSH R"+str(reg)+"\n")
 
+    def asmBroj(self,broj):
+        global trenutniRedIzlaza
+        global trenutniOperator
+
+        trenRegistar = nadiSlobodniRegistar()
+
+
+        if trenutniOperator == '+':
+            operator = ''
+        else:
+            operator  = '-'
+
+        trenRegistar = str(trenRegistar)
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t\t")
+        file.write("MOVE %D "+operator+broj+", R"+trenRegistar+"\n")
+        trenutniRedIzlaza += 1
+
+        lbl = imaLiLabele(trenutniRedIzlaza)
+        if not lbl:
+            file.write("\t\t\t")
+        file.write("PUSH R"+trenRegistar+"\n")
+        trenutniRedIzlaza += 1
+
+    def asmBrojGlob(self,broj):
+        global trenutniRedIzlaza
+        file.write(" "+str(broj)+"\n")
+        trenutniRedIzlaza += 1
+
+
     def provjeri(self):
         global jeliFja
         global uFji
@@ -1741,7 +1772,10 @@ class PrimarniIzraz(SlozenaNaredba):
 
             self.tip = "int"
 
-
+            if uFji:
+                self.asmBroj(broj)
+            else:
+                self.asmBrojGlob(broj)
 
             return 0
 
