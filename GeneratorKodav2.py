@@ -1770,9 +1770,9 @@ class DefinicijaFunkcije(SlozenaNaredba):
         self.pozicijaUprogramu = pozicijaUprogramu
 
     def provjeri(self):
-
+        global uFJi
         global imeTrenutneFunkcije
-
+        uFji = 1
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
         ime_tipa = ImeTipa(desnaStrana[0][1])
@@ -1815,6 +1815,7 @@ class DefinicijaFunkcije(SlozenaNaredba):
 
             slozena_naredba = SlozenaNaredba(desnaStrana[5][1])
             slozena_naredba.provjeri()
+        uFji = 0
 
 class ImeTipa(SlozenaNaredba):
 
