@@ -4,7 +4,7 @@
 
 x		DW %D  15
 y		DW %D  16
-			LOAD R0, (x)
+main			LOAD R0, (x)
 			PUSH R0
 			LOAD R0, (y)
 			PUSH R0

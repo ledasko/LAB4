@@ -1881,10 +1881,20 @@ class DefinicijaFunkcije(SlozenaNaredba):
     def __init__(self,pozicijaUprogramu):
         self.pozicijaUprogramu = pozicijaUprogramu
 
+    def asmLabela(self,lbl):
+        global labele
+        global trenutniRedIzlaza
+
+        file.write(lbl)
+
+        labele[trenutniRedIzlaza] = lbl
+
     def provjeri(self):
-        global uFJi
+        global uFji
         global imeTrenutneFunkcije
+
         uFji = 1
+
         desnaStrana = nadiDesnuStranu(self.pozicijaUprogramu)
 
         ime_tipa = ImeTipa(desnaStrana[0][1])
@@ -1909,6 +1919,8 @@ class DefinicijaFunkcije(SlozenaNaredba):
             if definirana:
                 ispisGreske(desnaStrana)
 
+        self.asmLabela(idn)
+
         #DO OVE TOCKE ISTO JE ZA OBE PRODUKCIJE
 
         if desnaStrana[3][0] == "<lista_parametara>":
@@ -1927,6 +1939,7 @@ class DefinicijaFunkcije(SlozenaNaredba):
 
             slozena_naredba = SlozenaNaredba(desnaStrana[5][1])
             slozena_naredba.provjeri()
+
         uFji = 0
 
 class ImeTipa(SlozenaNaredba):
