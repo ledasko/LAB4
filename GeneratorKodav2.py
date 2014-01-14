@@ -729,7 +729,7 @@ class IzravniDeklarator(SlozenaNaredba):
 
             #nesto treba vratit
             return ntip
-        
+
 class ListaParametara(SlozenaNaredba):
 
     def __init__(self,pozicijaUprogramu):
