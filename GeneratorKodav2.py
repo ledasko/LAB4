@@ -1633,6 +1633,9 @@ class PrimarniIzraz(SlozenaNaredba):
             elif tmp == 'NIZ_ZNAKOVA':
                 return 4
 
+    def asmIdn(self):
+
+
     def provjeri(self):
         global jeliFja
         global uFji
@@ -1662,6 +1665,8 @@ class PrimarniIzraz(SlozenaNaredba):
             l_izraz = rezultat[0]
             self.tip = rezultat[1]
 
+            self.asmIdn()
+
             return l_izraz
 
 
@@ -1680,6 +1685,9 @@ class PrimarniIzraz(SlozenaNaredba):
 
 
             self.tip = "int"
+
+
+
             return 0
 
         elif brojProdukcije == 3:
